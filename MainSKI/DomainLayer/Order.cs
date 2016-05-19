@@ -170,7 +170,7 @@ namespace DomainLayer
 
         public static Order CreateOrder(string e02)
         {
-            //TODO: Make magical code that creates awesome order.
+            //TODO: Make magical code that creates awesome Order.
             return new Order();
         }
         
