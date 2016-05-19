@@ -8,6 +8,7 @@ namespace DomainLayer
 {
     public class Customer
     {
+        #region Fields
         private string _id;
         private string _name;
         private string _address;
@@ -18,6 +19,7 @@ namespace DomainLayer
         private string _phoneCell;
         private string _fax;
         List<Order> _orders;
+        #endregion
 
         #region Properties
         public string Id
