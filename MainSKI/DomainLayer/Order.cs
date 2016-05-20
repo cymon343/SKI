@@ -5,6 +5,7 @@ namespace DomainLayer
 {
     public class Order
     {
+        #region Fields
         private string _id;
         private int _orderNumber;
         private DateTime _deliveryDate;
@@ -16,6 +17,8 @@ namespace DomainLayer
         private List<Element> _elements;
         private ProgressState[] _progressInfo;
         private List<ProductionData> _prodData;
+
+        #endregion
 
         #region Properties
         public string Id
@@ -163,16 +166,21 @@ namespace DomainLayer
 
         #endregion
 
+        #region Constructors
         private Order()
         {
            //TODO: Determine Constructor.
         }
 
+        #endregion
+
+        #region Methods
         public static Order CreateOrder(string e02)
         {
             //TODO: Make magical code that creates awesome Order.
             return new Order();
         }
-        
+
+        #endregion
     }
 }

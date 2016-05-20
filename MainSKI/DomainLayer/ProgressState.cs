@@ -8,9 +8,12 @@ namespace DomainLayer
 {
     public class ProgressState
     {
+        #region fields
         private string _comment;
         private bool _begun;
         private bool _done;
+
+        #endregion
 
         #region properties
         public string Comment
@@ -53,6 +56,7 @@ namespace DomainLayer
         }
         #endregion
 
+        #region Constructors
         public ProgressState()
         {
             _comment = "";
@@ -66,5 +70,7 @@ namespace DomainLayer
             Begun = begun;
             Done = done; 
         }
+
+        #endregion
     }
 }

@@ -140,6 +140,7 @@ namespace DomainLayer
         }
         #endregion
 
+        #region Constructors
         public Customer(string id, string name, string address, string deliveryAddress, string email,
                         string phonePrivate, string phoneWork, string phoneCell, string fax)
         {
@@ -153,5 +154,6 @@ namespace DomainLayer
             PhoneCell = phoneCell;
             Fax = fax;
         }
+        #endregion
     }
 }
