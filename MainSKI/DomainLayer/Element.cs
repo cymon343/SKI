@@ -16,7 +16,7 @@ namespace DomainLayer
         private double _amount;
         private string _unit;
         private string _heading;
-        private ProgressState _progressInfo[];
+        private ProgressState[] _progressInfo;
 
         #region Properties
         public string Id
@@ -123,7 +123,7 @@ namespace DomainLayer
             }
         }
 
-        public ProgressState ProgressInfo
+        public ProgressState[] ProgressInfo
         {
             get
             {
@@ -137,7 +137,7 @@ namespace DomainLayer
         }
         #endregion
 
-        public Element(string id, string position, string text, string hinge, string fin, double amount, string unit, string heading, ProgressState progressInfo)
+        public Element(string id, string position, string text, string hinge, string fin, double amount, string unit, string heading, ProgressState[] progressInfo)
         {
             Id = id;
             Position = position;
