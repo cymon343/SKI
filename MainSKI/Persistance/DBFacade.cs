@@ -1,5 +1,4 @@
-﻿using DomainLayer;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Data;
@@ -63,8 +62,8 @@ namespace Persistance
 
         #region Methods
 
-        public bool CreateOrder(Order o)
-        {
+        public bool CreateOrder(Order o) //Command / Callback something something... :^D
+        { 
             bool success = false;
             try
             {
@@ -77,7 +76,6 @@ namespace Persistance
                     using (SqlCommand command = new SqlCommand("createOrder", connection) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add("@OrderID", SqlDbType.VarChar).Value = o.Id;
-                        
                         
 
                         success = (command.ExecuteNonQuery() > 0); //TODO: REVISE THIS!!
