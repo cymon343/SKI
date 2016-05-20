@@ -4,14 +4,21 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using DomainLayer;
 
 namespace ControllerLayer
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
     [ServiceContract]
-    public interface IService1
+    public interface IOfficeOrderService
     {
         [OperationContract]
-        Person GetData(string id);
+        bool AddOrder(string path);
+        [OperationContract]
+        bool AddSubOrderToOrder(string path, string orderID);
+
+        [OperationContract]
+        string TestService(string test, string testy);
+
     }     
 }

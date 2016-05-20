@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace DomainLayer
 {
     public class OrderController
@@ -49,6 +50,7 @@ namespace DomainLayer
             Order order = Order.CreateOrder(e02);
             if (order != null)
             {
+                //if(DB)
                 _orders.Add(order);
                 return true;
             }
@@ -154,6 +156,7 @@ namespace DomainLayer
                     order.ProgressInfo[station].Done = !order.ProgressInfo[station].Done;
                 }
             }
+        }
 
         public void SetOrderComment(int station, string orderID, string comment)
         {
@@ -165,6 +168,7 @@ namespace DomainLayer
                     order.ProgressInfo[station].Comment = comment;
                 }
             }
+        }
 
         public List<Order> GetOrdersByDeliveryDate(DateTime fromDate)
         {
