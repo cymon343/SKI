@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Persistence;
 
 
 namespace DomainLayer
@@ -12,8 +13,6 @@ namespace DomainLayer
         #region Fields
         private static OrderController _instance;
         private List<Order> _orders;
-        private const int FROM_DATE_MONTH_OFFSET = -2; //TODO: Save this in properties file.
-
         #endregion
 
         #region Properties
@@ -35,9 +34,7 @@ namespace DomainLayer
         #region Constructor
         private OrderController()
         {
-            DateTime fromDate = DateTime.Now;
-            fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
-            _orders = GetOrdersByDeliveryDate(fromDate);
+            _orders = DBFacade.Instance.RetrieveAllOrders();
             SortOrders();
         }
 
@@ -50,22 +47,79 @@ namespace DomainLayer
             Order order = Order.CreateOrder(e02);
             if (order != null)
             {
-                //if(DB)
-                _orders.Add(order);
-                return true;
+                if (DBFacade.Instance.CreateOrder(order))
+                {
+                    _orders.Add(order);
+                    return true;
+                }
             }
             return false;
         }
 
-        public bool AddSubOrderToOrder(string e02, string orderID)
+        public bool AddSubOrderToOrder(string e02, string mainOrderID)
         {
-            Order subOrder = Order.CreateOrder(e02);
-            //TODO: Consider/discuss if Suborders in orders should be accessed via a "Add" method instead.
-            Order order = FindOrderByID(orderID);
-            if(order != null)
+            Order mainOrder = FindOrderByID(mainOrderID);
+            if (mainOrder != null)
             {
-                order.SubOrders.Add(subOrder);
-                return true;
+                Order subOrder = Order.CreateOrder(e02);
+                subOrder.MainOrder = mainOrder;
+
+                if (DBFacade.Instance.CreateOrder(subOrder))
+                {
+                    _orders.Add(subOrder);
+                    mainOrder.SubOrders.Add(subOrder);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool AddSubOrderToOrder(string e02, Order mainOrder)
+        {
+            if (mainOrder != null)
+            {
+                Order subOrder = Order.CreateOrder(e02);
+                subOrder.MainOrder = mainOrder;
+
+                if (DBFacade.Instance.CreateOrder(subOrder))
+                {
+                    _orders.Add(subOrder);
+                    mainOrder.SubOrders.Add(subOrder);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool AddSubOrderToOrder(Order subOrder, string mainOrderID)
+        {
+            Order mainOrder = FindOrderByID(mainOrderID);
+            if (mainOrder != null)
+            {
+                subOrder.MainOrder = mainOrder;
+
+                if (DBFacade.Instance.CreateOrder(subOrder))
+                {
+                    _orders.Add(subOrder);
+                    mainOrder.SubOrders.Add(subOrder);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool AddSubOrderToOrder(Order subOrder, Order mainOrder)
+        {
+            if (mainOrder != null)
+            {
+                subOrder.MainOrder = mainOrder;
+
+                if (DBFacade.Instance.CreateOrder(subOrder))
+                {
+                    _orders.Add(subOrder);
+                    mainOrder.SubOrders.Add(subOrder);
+                    return true;
+                }
             }
             return false;
         }
@@ -88,13 +142,14 @@ namespace DomainLayer
 
         public void FlipElementBegun(int station, string orderID, string elementID)
         {
-            if(true) //TODO: Insert call to DBHandler.
+
+            Order order = FindOrderByID(orderID);
+            if (order != null)
             {
-                Order order = FindOrderByID(orderID);
-                if(order != null)
+                Element element = FindElementOnOrderByID(order, elementID);
+                if (element != null)
                 {
-                    Element element = FindElementOnOrderByID(order, elementID);
-                    if(element != null)
+                    if (DBFacade.Instance.UpdateElementProgressStateBegun(elementID, station, !element.ProgressInfo[station].Begun))
                     {
                         element.ProgressInfo[station].Begun = !element.ProgressInfo[station].Begun;
                     }
@@ -104,13 +159,13 @@ namespace DomainLayer
 
         public void FlipElementDone(int station, string orderID, string elementID)
         {
-            if (true) //TODO: Insert call to DBHandler.
+            Order order = FindOrderByID(orderID);
+            if (order != null)
             {
-                Order order = FindOrderByID(orderID);
-                if (order != null)
+                Element element = FindElementOnOrderByID(order, elementID);
+                if (element != null)
                 {
-                    Element element = FindElementOnOrderByID(order, elementID);
-                    if (element != null)
+                    if (DBFacade.Instance.UpdateElementProgressStateDone(elementID, station, !element.ProgressInfo[station].Done))
                     {
                         element.ProgressInfo[station].Done = !element.ProgressInfo[station].Done;
                     }
@@ -120,13 +175,13 @@ namespace DomainLayer
 
         public void SetElementComment(int station, string orderID, string elementID, string comment)
         {
-            if (true) //TODO: Insert call to DBHandler.
+            Order order = FindOrderByID(orderID);
+            if (order != null)
             {
-                Order order = FindOrderByID(orderID);
-                if (order != null)
+                Element element = FindElementOnOrderByID(order, elementID);
+                if (element != null)
                 {
-                    Element element = FindElementOnOrderByID(order, elementID);
-                    if (element != null)
+                    if (DBFacade.Instance.UpdateElementProgressStateComment(elementID, station, comment))
                     {
                         element.ProgressInfo[station].Comment = comment;
                     }
@@ -136,22 +191,23 @@ namespace DomainLayer
 
         public void FlipOrderBegun(int station, string orderID)
         {
-            if (true) //TODO: Insert call to DBHandler.
+            Order order = FindOrderByID(orderID);
+            if (order != null)
             {
-                Order order = FindOrderByID(orderID);
-                if(order != null)
+                if (DBFacade.Instance.UpdateOrderProgressStateBegun(orderID, station, !order.ProgressInfo[station].Begun))
                 {
                     order.ProgressInfo[station].Begun = !order.ProgressInfo[station].Begun;
                 }
             }
+
         }
 
         public void FlipOrderDone(int station, string orderID)
         {
-            if (true) //TODO: Insert call to DBHandler.
+            Order order = FindOrderByID(orderID);
+            if (order != null)
             {
-                Order order = FindOrderByID(orderID);
-                if (order != null)
+                if (DBFacade.Instance.UpdateOrderProgressStateDone(orderID, station, !order.ProgressInfo[station].Done))
                 {
                     order.ProgressInfo[station].Done = !order.ProgressInfo[station].Done;
                 }
@@ -160,10 +216,10 @@ namespace DomainLayer
 
         public void SetOrderComment(int station, string orderID, string comment)
         {
-            if (true) //TODO: Insert call to DBHandler.
+            Order order = FindOrderByID(orderID);
+            if (order != null)
             {
-                Order order = FindOrderByID(orderID);
-                if (order != null)
+                if (DBFacade.Instance.UpdateOrderProgressStateComment(orderID, station, comment))
                 {
                     order.ProgressInfo[station].Comment = comment;
                 }
@@ -174,9 +230,9 @@ namespace DomainLayer
         {
             List<Order> orders = new List<Order>();
 
-            foreach(Order o in _orders)
+            foreach (Order o in _orders)
             {
-                if(o.DeliveryDate > fromDate)
+                if (o.DeliveryDate > fromDate)
                 {
                     orders.Add(o);
                 }
@@ -186,7 +242,7 @@ namespace DomainLayer
 
         private Order FindOrderByID(string orderID)
         {
-            foreach(Order o in _orders)
+            foreach (Order o in _orders)
             {
                 if (o.Id == orderID)
                     return o;
@@ -206,7 +262,7 @@ namespace DomainLayer
 
         private void SortOrders()
         {
-            if(_orders != null)
+            if (_orders != null)
                 _orders = _orders.OrderBy(o => o.DeliveryDate).ToList<Order>();
         }
 

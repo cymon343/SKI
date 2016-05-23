@@ -9,9 +9,11 @@ using DomainLayer;
 
 namespace ControllerLayer
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ProductionOrderService" in both code and config file together.
     public class ProductionOrderService : IProductionOrderService
     {
+        #region Fields
+        private const int FROM_DATE_MONTH_OFFSET = -2; //TODO: Save this in properties file.
+        #endregion
 
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "flipElementBegun/{orderID}/{elementID}/{stationNumber}")]
         public void FlipElementBegun(string orderID, string elementID, string stationNumber)
@@ -40,8 +42,10 @@ namespace ControllerLayer
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getOrders")]
         public List<Order> GetOrders()
         {
+            DateTime fromDate = DateTime.Now;
+            fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
             //TODO: Discuss with SBL - No need to call GetOrderByDeliveryDate as domain will always be up to date, and handle all database interactions- Thus accessing list directly is likely more efficient?!
-            return OrderController.Instance.Orders;
+            return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
         }
         
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "setElementComment/{orderID}/{elementID}/{stationNumber}/{comment}")]

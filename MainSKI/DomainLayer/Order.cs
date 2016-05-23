@@ -6,17 +6,20 @@ namespace DomainLayer
     public class Order
     {
         #region Fields
-        private string _id;
-        private int _orderNumber;
-        private DateTime _deliveryDate;
-        private DateTime _productionDate;
-        private double _cubicMeters;
-        private double _numOfElements;
-        private List<string> _appendixLinks;
-        private List<Order> _subOrders;
-        private List<Element> _elements;
+        private string _id; 
+        private Customer _customer; 
+        private int _orderNumber; 
+        private DateTime _deliveryDate; 
+        private DateTime _productionDate; 
+        private double _cubicMeters; 
+        private double _numOfElements; 
+        private List<string> _appendixLinks; 
+        private Order _mainOrder; 
+        private List<Order> _subOrders; 
+        private List<Element> _elements; 
         private ProgressState[] _progressInfo;
         private List<ProductionData> _prodData;
+        
 
         #endregion
 
@@ -161,6 +164,32 @@ namespace DomainLayer
             set
             {
                 _prodData = value;
+            }
+        }
+
+        public Customer Customer
+        {
+            get
+            {
+                return _customer;
+            }
+
+            set
+            {
+                _customer = value;
+            }
+        }
+
+        public Order MainOrder
+        {
+            get
+            {
+                return _mainOrder;
+            }
+
+            set
+            {
+                _mainOrder = value;
             }
         }
 
