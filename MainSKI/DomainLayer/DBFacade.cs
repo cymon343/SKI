@@ -64,8 +64,7 @@ namespace Persistence
         #region Methods
 
         public bool CreateOrder(Order o)
-        { 
-            //TODO: CHECK FOR DEPENDENCY TABLES AND CREATE WHERE NECCESARY.
+        {
             bool success = false;
             try
             {
@@ -78,10 +77,11 @@ namespace Persistence
                     using (SqlCommand command = new SqlCommand("createOrder", connection) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
-                        command.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id;
-
+                        //TODO 1) CREATE CUSTOMER 
+                        command.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; //Cannot be null
+                                                
                         if (o.MainOrder != null)
-                            command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.Id; //This guarantees that we never need to handle subOrders on order (DB) creation
+                            command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.Id;//This guarantees that we never need to handle subOrders on order (DB) creation
                         else
                             command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
 
@@ -91,7 +91,25 @@ namespace Persistence
                         command.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
                         command.Parameters.Add("@numberOfElements", SqlDbType.Float).Value = o.NumOfElements;
 
-                        success = (command.ExecuteNonQuery() > 0);
+                        if (CreateCustomer(o.Customer, connection))
+                        {
+                            if (command.ExecuteNonQuery() > 0) //IF order is created
+                            {
+                                if (CreateLink(o.AppendixLinks, connection))
+                                {
+                                    if (CreateOPS(o.ProgressInfo, connection))
+                                    {
+                                        if (CreateProductionData(o.ProdData, connection))
+                                        {
+                                            if (CreateElements(o.Elements, connection))
+                                            {
+                                                success = true;                                               
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
                         if (success)
                             Console.WriteLine("Order created in DB...");
@@ -110,6 +128,47 @@ namespace Persistence
             return success;
         }
 
+        private bool CreateCustomer(Customer customer, SqlConnection connection)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool CreateLink(List<string> appendixLinks, SqlConnection connection)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool CreateOPS(ProgressState[] progressInfo, SqlConnection connection)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool CreateProductionData(List<ProductionData> prodData, SqlConnection connection)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool CreateElements(List<Element> elements, SqlConnection connection)
+        {
+            bool success = false;
+            //Foreach element:
+            for (int i = 0; i < elements.Count; i++)
+            {
+                //Create the Element...
+                if (CreateEPS(elements[i].ProgressInfo, connection))
+                {
+                    success = true;
+                }
+            }
+            
+            throw new NotImplementedException();
+        }
+
+        private bool CreateEPS(ProgressState[] progressInfo, SqlConnection connection)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Order> RetrieveAllOrders()
         {
             /*
@@ -119,7 +178,7 @@ namespace Persistence
 
             "ORDER DESCRIBED BELOW":
             1) ElementProgressState
-            2) Elements
+            2) Element
             3) OrderProgressState
             4) Links
             5) ProductionData
@@ -349,6 +408,5 @@ namespace Persistence
         }
 
         #endregion
-
     }
 }
