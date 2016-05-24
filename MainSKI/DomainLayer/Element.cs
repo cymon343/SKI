@@ -151,7 +151,7 @@ namespace DomainLayer
             Amount = amount;
             Unit = unit;
             Heading = heading;
-            ProgressInfo = progressInfo;
+            ProgressInfo = progressInfo; //Dangerous? must be size 4
         }
 
         #endregion
