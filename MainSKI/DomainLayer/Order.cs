@@ -24,7 +24,7 @@ namespace DomainLayer
         #endregion
 
         #region Properties
-        public string Id
+        public string ID
         {
             get
             {
@@ -201,6 +201,19 @@ namespace DomainLayer
            //TODO: Determine Constructor.
         }
 
+        private Order (string id, Customer customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
+        {
+            ID = id;
+            Customer = customer;
+            OrderNumber = orderNumber;
+            DeliveryDate = deliveryDate;
+            ProductionDate = productionDate;
+            CubicMeters = cubicMeters;
+            NumOfElements = numberOfElements;
+            AppendixLinks = new List<string>();
+            Elements = new List<Element>();
+            ProdData = new List<ProductionData>();
+        }
         #endregion
 
         #region Methods
@@ -208,6 +221,11 @@ namespace DomainLayer
         {
             //TODO: Make magical code that creates awesome Order.
             return new Order();
+        }
+
+        public static Order CreateOrder(string id, Customer customer, string orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
+        {
+            return new Order(id, customer, orderNumber, deliveryDate, productionDate, cubicMeters, numberOfElements);
         }
 
         #endregion

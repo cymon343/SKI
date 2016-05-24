@@ -53,7 +53,7 @@ namespace Persistence
             if (UserName.ToUpper() == "CYMON343")
                 _userConnectionString = "SimonDesktop";
             else if (UserName.ToUpper() == "SIMON")
-                _userConnectionString = "SimonLaptop";            
+                _userConnectionString = "SimonLaptop";
             else if (UserName.ToUpper() == "TM_MA")
                 _userConnectionString = "MortenLaptop";
             else if (UserName.ToUpper() == "BRUGER")
@@ -76,12 +76,12 @@ namespace Persistence
                     Console.WriteLine(UserName + " connected to DB...");
                     using (SqlCommand command = new SqlCommand("createOrder", connection) { CommandType = CommandType.StoredProcedure })
                     {
-                        command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
+                        command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                         //TODO 1) CREATE CUSTOMER 
                         command.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; //Cannot be null
-                                                
+
                         if (o.MainOrder != null)
-                            command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.Id;//This guarantees that we never need to handle subOrders on order (DB) creation
+                            command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.ID;//This guarantees that we never need to handle subOrders on order (DB) creation
                         else
                             command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
 
@@ -103,7 +103,7 @@ namespace Persistence
                                         {
                                             if (CreateElements(o.Elements, connection))
                                             {
-                                                success = true;                                               
+                                                success = true;
                                             }
                                         }
                                     }
@@ -160,7 +160,7 @@ namespace Persistence
                     success = true;
                 }
             }
-            
+
             throw new NotImplementedException();
         }
 
@@ -185,12 +185,181 @@ namespace Persistence
             6) Customer
             7) Order
             */
+            try
+            {
+                Console.WriteLine(UserName + " trying to access DB...");
+                DataTable table = new DataTable();
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine(UserName + " connected to DB...");
+
+                    // 1) Retrieving Customer
+                    Console.WriteLine("Retrieving Customers from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getCustomers", connection);
+                    table.Load(cmd.ExecuteReader());
+                    List<Customer> customers = new List<Customer>();
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string id = row["CustomerID"].ToString();
+                        string name = row["Name"].ToString();
+                        string address = row["Address"].ToString();
+                        string deliveryAddress = row["DeliveryAddress"].ToString();
+                        string email = row["Email"].ToString();
+                        string phonePrivate = row["PhonePrivate"].ToString();
+                        string phoneWork = row["PhoneWork"].ToString();
+                        string phoneCell = row["PhoneCell"].ToString();
+                        string fax = row["Fax"].ToString();
+                        customers.Add(new Customer(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax);
+                    }
+
+                    // 2) Retrieving Orders
+                    Console.WriteLine("Retrieving Orders from DB...");
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM getOrders", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    List<Order> orders = new List<Order>();
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string id = row["OrderID"].ToString();
+                        string customerID = row["CustomerID"].ToString();
+                        string mainOrderID = row["MainOrderID"].ToString();
+                        string OrderNumber = row["OrderNumber"].ToString();
+                        DateTime deliveryDate = (DateTime)row["DeliveryDate"];
+                        DateTime productionDate = (DateTime)row["ProductionDate"];
+                        double cubicMeters = (double)row["CubicMeters"];
+                        double numberOfElements = (double)row["NumberOfElements"];
+
+                        // 2.1) Adding customer to Order.
+                        for (int i = 0; i < customers.Count; i++)
+                        {
+                            if (customers[i].Id == customerID)
+                            {
+                                orders.Add(Order.CreateOrder(id, customers[i], OrderNumber, deliveryDate, productionDate, cubicMeters, numberOfElements));
+                                customers.RemoveAt(i);
+                                i--;
+                                break;
+                            }
+                        }
+
+                    }
+
+                    // 3) Retrieving ElementProgressState
+                    Console.WriteLine("Retrieving Element ProgressStates from DB...");
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    List<ProgressState> eps = new List<ProgressState>();
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string elementID = row["ElementID"].ToString();
+                        string comment = row["Comment"].ToString();
+                        bool begun = (bool)row["Begun"];
+                        bool done = (bool)row["Done"];
+                        eps.Add(new ProgressState(elementID, comment, begun, done));
+                    }
+
+                    // 4) Retrieving Element
+                    Console.WriteLine("Retrieving Elements from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getElements", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string id = row["ElementID"].ToString();
+                        string orderID =  = row["OrderID"].ToString();
+                        string position = row["Position"].ToString();
+                        string text = row["Text"].ToString();
+                        string hinge = row["Hinge"].ToString();
+                        string fin = row["Fin"].ToString();
+                        double amount = (double)row["Amount"];
+                        string unit = row["Unit"].ToString();
+                        string heading = row["Heading"].ToString();
+
+                        // 2.1) Adding ElementProgressStates to Elements
+                        List<ProgressState> tmpEps = new List<ProgressState>();
+                        for (int i = 0; i < eps.Count; i++)
+                        {
+                            if (eps[i].ParentID == id)
+                            {
+                                tmpEps.Add(eps[i]);
+                                eps.RemoveAt(i);
+                                i--;
+                            }
+
+                        }
+                        foreach (Order o in orders)
+                        {
+                            if (o.ID == orderID)
+                                o.Elements.Add(new Element(id, position, text, hinge, fin, amount, unit, heading, tmpEps.ToArray()));
+                        }
+                    }
+
+                    // 5) Retrieving OrderProgressState
+                    Console.WriteLine("Retrieving Order ProgressStates from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getOrderProgressState", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    List<ProgressState> ops = new List<ProgressState>();
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string orderID = row["OrderID"].ToString();
+                        string comment = row["Comment"].ToString();
+                        bool begun = (bool)row["Begun"];
+                        bool done = (bool)row["Done"];
+                        ops.Add(new ProgressState(orderID, comment, begun, done));
+                    }
 
 
+                    // 6) Retrieving Links
+                    Console.WriteLine("Retrieving Links from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getLinks", connection);
+                    table.Load(cmd.ExecuteReader());
 
-            throw new NotImplementedException();
-        }
-        
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string orderID = row["OrderID"].ToString();
+                        string theLink = row["TheLink"].ToString();
+
+                        foreach (Order o in orders)
+                        {
+                            if (orderID == o.ID)
+                            {
+                                o.AppendixLinks.Add(theLink);
+                                break;
+                            }
+                        }
+                    }
+
+                    // 7) Retrieving Production Data
+                    Console.WriteLine("Retrieving Production Data from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getProductionData", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string orderID = row["OrderID"].ToString();
+                        string data = row["Data"].ToString();
+
+                        foreach (Order o in orders)
+                        {
+                            if (orderID == o.ID)
+                            {
+                                //LOOK INTO THIS - As Simon said - Something something with the ProductionData Object.
+                                //o.AppendixLinks.Add(theLink);
+                                break;
+                            }
+                        }
+                        connection.Close();
+                        Console.WriteLine(UserName + " disconnected from DB...");
+
+                    }
+                }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+
         public bool UpdateOrderProgressStateBegun(string orderID, int stationNumber, bool begun)
         {
             bool success = false;

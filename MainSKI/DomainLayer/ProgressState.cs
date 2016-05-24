@@ -12,6 +12,7 @@ namespace DomainLayer
         private string _comment;
         private bool _begun;
         private bool _done;
+        private string _parentID;
 
         #endregion
 
@@ -54,21 +55,43 @@ namespace DomainLayer
                 _done = value;
             }
         }
+
+        public string ParentID
+        {
+            get
+            {
+                return _parentID;
+            }
+
+            set
+            {
+                _parentID = value;
+            }
+        }
+
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+
+            set
+            {
+                _id = value;
+            }
+        }
         #endregion
 
         #region Constructors
-        public ProgressState()
-        {
-            _comment = "";
-            _begun = false;
-            _done = false;
-        }
 
-        public ProgressState(string comment, bool begun, bool done)
+        public ProgressState(string parentID, string comment, bool begun, bool done)
         {
+            Id = id;
+            ParentID = parentID;
             Comment = comment;
             Begun = begun;
-            Done = done; 
+            Done = done;
         }
 
         #endregion
