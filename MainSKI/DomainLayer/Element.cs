@@ -169,6 +169,12 @@ namespace DomainLayer
             ProgressInfo = progressInfo;
         }
 
+        public Element()
+        {
+            //TODO: Make magical code that creates awesome Element.
+            //NB: Make sure that arraySize of _progressInfo is 4.
+        }
+
         #endregion
     }
 }

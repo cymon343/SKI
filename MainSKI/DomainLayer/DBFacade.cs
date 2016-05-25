@@ -11,7 +11,7 @@ using DomainLayer;
 
 namespace Persistence
 {
-    class DBFacade
+    public class DBFacade
     {
         #region Fields
         private string _userName;
@@ -71,7 +71,8 @@ namespace Persistence
             {
                 Console.WriteLine(UserName + " trying to access DB...");
 
-                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))               
+
                 {
                     conn.Open();
                     Console.WriteLine(UserName + " connected to DB...");
@@ -104,7 +105,7 @@ namespace Persistence
                             orderCommand.Transaction = transAction;
 
                             orderCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                            orderCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; 
+                            orderCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id;
 
                             if (o.MainOrderID != null)
                                 orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrderID;
@@ -116,7 +117,7 @@ namespace Persistence
                             orderCommand.Parameters.Add("@productionDate", SqlDbType.Date).Value = o.ProductionDate.Date;
                             orderCommand.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
                             orderCommand.Parameters.Add("@numberOfElements", SqlDbType.Float).Value = o.NumOfElements;
-                            
+
                             transAction.Save("Order");
                         }
 
@@ -128,7 +129,7 @@ namespace Persistence
 
                                 linkCommand.Transaction = transAction;
 
-                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i+1;
+                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i + 1;
                                 linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i].TheLink;
 
@@ -137,18 +138,18 @@ namespace Persistence
                         }
 
                         //#4 OPS
-                        for (int i = 0; i < o.ProgressInfo.Length; i++) 
+                        for (int i = 0; i < o.ProgressInfo.Length; i++)
                         {
                             using (SqlCommand OPSCommand = new SqlCommand("createOPS", conn) { CommandType = CommandType.StoredProcedure })
                             {
                                 OPSCommand.Transaction = transAction;
 
-                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + i+1; 
+                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + i + 1;
                                 OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 OPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.ProgressInfo[i].Comment;
                                 OPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.ProgressInfo[i].Begun;
-                                OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;                                
-                                OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.ProgressInfo[i].StationNumber; 
+                                OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;
+                                OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.ProgressInfo[i].StationNumber;
 
                                 transAction.Save("OPS_" + i);
                             }
@@ -161,14 +162,14 @@ namespace Persistence
                             {
                                 ProdDataCommand.Transaction = transAction;
 
-                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i+1; 
-                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;                                
-                                transAction.Save("PRODDATA_" + i+1);
+                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + 1;
+                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
+                                transAction.Save("PRODDATA_" + i + 1);
                             }
 
                             //#5.1 Data
-                            for (int j = 0; j < o.ProdData[i].Data.Count; j++)                            
-                            {                                
+                            for (int j = 0; j < o.ProdData[i].Data.Count; j++)
+                            {
                                 using (SqlCommand DataCommand = new SqlCommand("createData", conn) { CommandType = CommandType.StoredProcedure })
                                 {
                                     DataCommand.Transaction = transAction;
@@ -210,14 +211,14 @@ namespace Persistence
                                 {
                                     EPSCommand.Transaction = transAction;
 
-                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.ID + "_EPS_" + i + 1; 
+                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.ID + "_EPS_" + i + 1;
                                     EPSCommand.Parameters.Add("@elementID", SqlDbType.VarChar).Value = o.Elements[i].Id;
                                     EPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Comment;
                                     EPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Begun;
                                     EPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Done;
-                                    EPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.Elements[i].ProgressInfo[j].StationNumber; 
+                                    EPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.Elements[i].ProgressInfo[j].StationNumber;
 
-                                    transAction.Save("EPS_" + i+1 + "_" + j+1);
+                                    transAction.Save("EPS_" + i + 1 + "_" + j + 1);
                                 }
                             }
 

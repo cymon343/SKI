@@ -195,26 +195,7 @@ namespace DomainLayer
 
         #endregion
 
-        #region Constructors
-        private Order()
-        {
-            //TODO: Determine Constructor.
-        }
-
-        private Order(string id, CustomerData customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
-        {
-            ID = id;
-            Customer = customer;
-            OrderNumber = orderNumber;
-            DeliveryDate = deliveryDate;
-            ProductionDate = productionDate;
-            CubicMeters = cubicMeters;
-            NumOfElements = numberOfElements;
-            AppendixLinks = new List<Link>();
-            Elements = new List<Element>();
-            ProdData = new List<ProductionData>();
-        }
-
+        #region Constructors     
         private Order(string _id, CustomerData _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
         {
             this._id = _id;
@@ -237,7 +218,8 @@ namespace DomainLayer
         public static Order CreateOrder(string e02)
         {
             //TODO: Make magical code that creates awesome Order.
-            return new Order();
+            //NB: Make sure that arraySize of _progressInfo is 4.
+            return null;
         }
 
         public static Order CreateOrder(string _id, CustomerData _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
