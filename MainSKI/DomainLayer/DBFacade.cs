@@ -170,11 +170,11 @@ namespace Persistence
                         {
                             orderCommand.Transaction = transAction;
 
-                            orderCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
+                            orderCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                             orderCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; //Cannot be null
 
                             if (o.MainOrder != null)
-                                orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.Id;//This guarantees that we never need to handle subOrders on order (DB) creation
+                                orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.ID;//This guarantees that we never need to handle subOrders on order (DB) creation
                             else
                                 orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
 
@@ -195,8 +195,8 @@ namespace Persistence
 
                                 linkCommand.Transaction = transAction;
 
-                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.Id + "_LINK_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK
-                                linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
+                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK
+                                linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i];
 
                                 transAction.Save("Link_" + i);
@@ -210,8 +210,8 @@ namespace Persistence
                             {
                                 OPSCommand.Transaction = transAction;
 
-                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.Id + "_OPS_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProgressState)
-                                OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
+                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProgressState)
+                                OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 OPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.ProgressInfo[i].Comment;
                                 OPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.ProgressInfo[i].Begun;
                                 OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;
@@ -230,8 +230,8 @@ namespace Persistence
                                 {
                                     ProdDataCommand.Transaction = transAction;
 
-                                    ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.Id + "_PRODDATA_" + i + "_" + j; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProductionData)
-                                    ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
+                                    ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + "_" + j; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProductionData)
+                                    ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                     ProdDataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
 
                                     transAction.Save("PRODDATA_" + i + "_" + j);
@@ -248,7 +248,7 @@ namespace Persistence
                                 ElementCommand.Transaction = transAction;
 
                                 ElementCommand.Parameters.Add("@elementID", SqlDbType.VarChar).Value = o.Elements[i].Id;
-                                ElementCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
+                                ElementCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 ElementCommand.Parameters.Add("@position", SqlDbType.VarChar).Value = o.Elements[i].Position;
                                 ElementCommand.Parameters.Add("@text", SqlDbType.VarChar).Value = o.Elements[i].Text;
                                 ElementCommand.Parameters.Add("@hinge", SqlDbType.VarChar).Value = o.Elements[i].Hinge;
@@ -314,11 +314,11 @@ namespace Persistence
             6) Customer
             7) Order
             */
+            List<Order> orders = new List<Order>();
             try
             {
                 Console.WriteLine(UserName + " trying to access DB...");
                 DataTable table = new DataTable();
-                List<Order> orders = new List<Order>();
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
                 {
                     connection.Open();
@@ -326,7 +326,7 @@ namespace Persistence
 
                     // 1) Retrieving Customer
                     Console.WriteLine("Retrieving Customers from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getCustomers", connection);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM getCustomers", connection);
                     table.Load(cmd.ExecuteReader());
                     List<Customer> customers = new List<Customer>();
                     foreach (DataRow row in table.Rows)
@@ -340,15 +340,15 @@ namespace Persistence
                         string phoneWork = row["PhoneWork"].ToString();
                         string phoneCell = row["PhoneCell"].ToString();
                         string fax = row["Fax"].ToString();
-                        customers.Add(new Customer(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax);
+                        customers.Add(new Customer(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax));
                     }
 
                     // 2) Retrieving Orders
                     Console.WriteLine("Retrieving Orders from DB...");
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM getOrders", connection);
+                    cmd = new SqlCommand("SELECT * FROM getOrders", connection);
                     table.Load(cmd.ExecuteReader());
 
-                    
+
                     foreach (DataRow row in table.Rows)
                     {
                         string id = row["OrderID"].ToString();
@@ -376,7 +376,7 @@ namespace Persistence
 
                     // 3) Retrieving ElementProgressState
                     Console.WriteLine("Retrieving Element ProgressStates from DB...");
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);
+                    cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);
                     table.Load(cmd.ExecuteReader());
 
                     List<ProgressState> eps = new List<ProgressState>();
@@ -397,7 +397,7 @@ namespace Persistence
                     foreach (DataRow row in table.Rows)
                     {
                         string id = row["ElementID"].ToString();
-                        string orderID =  = row["OrderID"].ToString();
+                        string orderID = row["OrderID"].ToString();
                         string position = row["Position"].ToString();
                         string text = row["Text"].ToString();
                         string hinge = row["Hinge"].ToString();
@@ -484,8 +484,9 @@ namespace Persistence
                         Console.WriteLine(UserName + " disconnected from DB...");
 
                     }
-                    
+
                 }
+            }
             catch (SqlException e)
             {
                 Console.WriteLine(e.StackTrace);
