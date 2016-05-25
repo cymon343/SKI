@@ -62,7 +62,7 @@ namespace DomainLayer
             if (mainOrder != null)
             {
                 Order subOrder = Order.CreateOrder(e02);
-                subOrder.MainOrder = mainOrder;
+                subOrder.MainOrderID = mainOrder;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -79,7 +79,7 @@ namespace DomainLayer
             if (mainOrder != null)
             {
                 Order subOrder = Order.CreateOrder(e02);
-                subOrder.MainOrder = mainOrder;
+                subOrder.MainOrderID = mainOrder;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -96,7 +96,7 @@ namespace DomainLayer
             Order mainOrder = FindOrderByID(mainOrderID);
             if (mainOrder != null)
             {
-                subOrder.MainOrder = mainOrder;
+                subOrder.MainOrderID = mainOrder;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -112,7 +112,7 @@ namespace DomainLayer
         {
             if (mainOrder != null)
             {
-                subOrder.MainOrder = mainOrder;
+                subOrder.MainOrderID = mainOrder;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {

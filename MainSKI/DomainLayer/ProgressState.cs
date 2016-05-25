@@ -13,6 +13,7 @@ namespace DomainLayer
         private bool _begun;
         private bool _done;
         private string _parentID;
+        private int _stationNumber;
 
         #endregion
 
@@ -81,17 +82,30 @@ namespace DomainLayer
                 _id = value;
             }
         }
+
+        public int StationNumber
+        {
+            get
+            {
+                return _stationNumber;
+            }
+
+            set
+            {
+                _stationNumber = value;
+            }
+        }
         #endregion
 
         #region Constructors
 
-        public ProgressState(string parentID, string comment, bool begun, bool done)
+        public ProgressState(string parentID, string comment, bool begun, bool done, int stationNumber)
         {
-            Id = id;
             ParentID = parentID;
             Comment = comment;
             Begun = begun;
             Done = done;
+            StationNumber = stationNumber;
         }
 
         #endregion

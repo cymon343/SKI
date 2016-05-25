@@ -14,7 +14,7 @@ namespace DomainLayer
         private double _cubicMeters; 
         private double _numOfElements; 
         private List<string> _appendixLinks; 
-        private Order _mainOrder; 
+        private string _mainOrderID; 
         private List<Order> _subOrders; 
         private List<Element> _elements; 
         private ProgressState[] _progressInfo;
@@ -180,16 +180,16 @@ namespace DomainLayer
             }
         }
 
-        public Order MainOrder
+        public string MainOrderID
         {
             get
             {
-                return _mainOrder;
+                return _mainOrderID;
             }
 
             set
             {
-                _mainOrder = value;
+                _mainOrderID = value;
             }
         }
 
@@ -223,7 +223,7 @@ namespace DomainLayer
             return new Order();
         }
 
-        public static Order CreateOrder(string id, Customer customer, string orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
+        public static Order CreateOrder(string id, Customer customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
         {
             return new Order(id, customer, orderNumber, deliveryDate, productionDate, cubicMeters, numberOfElements);
         }

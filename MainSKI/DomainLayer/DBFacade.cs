@@ -62,74 +62,7 @@ namespace Persistence
         #endregion
 
         #region Methods
-
-        //Original CreateOrder (incomplete) is kept in case I destroy it trying to create a batch opposed to several DB-calls
-        /*
-        public bool CreateOrder(Order o)
-        {
-            bool success = false;
-            try
-            {
-                Console.WriteLine(UserName + " trying to access DB...");
-
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
-                {
-                    connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
-                    using (SqlCommand command = new SqlCommand("createOrder", connection) { CommandType = CommandType.StoredProcedure })
-                    {
-                        command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.Id;
-                        //TODO 1) CREATE CUSTOMER 
-                        command.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; //Cannot be null
-                                                
-                        if (o.MainOrder != null)
-                            command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.Id;//This guarantees that we never need to handle subOrders on order (DB) creation
-                        else
-                            command.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
-
-                        command.Parameters.Add("@orderNumber", SqlDbType.Int).Value = o.OrderNumber;
-                        command.Parameters.Add("@deliveryDate", SqlDbType.Date).Value = o.DeliveryDate.Date;
-                        command.Parameters.Add("@productionDate", SqlDbType.Date).Value = o.ProductionDate.Date;
-                        command.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
-                        command.Parameters.Add("@numberOfElements", SqlDbType.Float).Value = o.NumOfElements;
-
-                        if (CreateCustomer(o.Customer, connection))
-                        {
-                            if (command.ExecuteNonQuery() > 0) //IF order is created
-                            {
-                                if (CreateLink(o.AppendixLinks, connection))
-                                {
-                                    if (CreateOPS(o.ProgressInfo, connection))
-                                    {
-                                        if (CreateProductionData(o.ProdData, connection))
-                                        {
-                                            if (CreateElements(o.Elements, connection))
-                                            {
-                                                success = true;                                               
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (success)
-                            Console.WriteLine("Order created in DB...");
-                        else
-                            Console.WriteLine("Failed to create Order in DB...");
-
-                        connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-            return success;
-        }
-        */
+                
         public bool CreateOrder(Order o)
         {
             bool success = false;
@@ -171,10 +104,10 @@ namespace Persistence
                             orderCommand.Transaction = transAction;
 
                             orderCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                            orderCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; //Cannot be null
+                            orderCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id; 
 
-                            if (o.MainOrder != null)
-                                orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrder.ID;//This guarantees that we never need to handle subOrders on order (DB) creation
+                            if (o.MainOrderID != null)
+                                orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = o.MainOrderID;
                             else
                                 orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
 
@@ -183,7 +116,7 @@ namespace Persistence
                             orderCommand.Parameters.Add("@productionDate", SqlDbType.Date).Value = o.ProductionDate.Date;
                             orderCommand.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
                             orderCommand.Parameters.Add("@numberOfElements", SqlDbType.Float).Value = o.NumOfElements;
-
+                            
                             transAction.Save("Order");
                         }
 
@@ -195,7 +128,7 @@ namespace Persistence
 
                                 linkCommand.Transaction = transAction;
 
-                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK
+                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i+1; 
                                 linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i];
 
@@ -204,37 +137,49 @@ namespace Persistence
                         }
 
                         //#4 OPS
-                        for (int i = 0; i < o.ProgressInfo.Length; i++) //
+                        for (int i = 0; i < o.ProgressInfo.Length; i++) 
                         {
                             using (SqlCommand OPSCommand = new SqlCommand("createOPS", conn) { CommandType = CommandType.StoredProcedure })
                             {
                                 OPSCommand.Transaction = transAction;
 
-                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProgressState)
+                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + i+1; 
                                 OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 OPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.ProgressInfo[i].Comment;
                                 OPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.ProgressInfo[i].Begun;
-                                OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;
-                                OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = i + 4; //TODO: Make sure we handle this in the right spot. Either here or in the controller Layer. ++ How do we ensure that the ProgressState[] on Order are of size 4?
+                                OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;                                
+                                OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.ProgressInfo[i].StationNumber; 
 
                                 transAction.Save("OPS_" + i);
                             }
                         }
 
-                        //#5 ProductionData  ********** - TODO FIND OUT HOW TO STORE THIS PROPERLY - **********
+                        //#5 ProductionData  ********** - TODO FIND OUT HOW TO STORE THIS PROPERLY - ********** (Partially Fixed)  //STILL NEED DB-CHANGES!!!!!
                         for (int i = 0; i < o.ProdData.Count; i++)
                         {
+                            using (SqlCommand ProdDataCommand = new SqlCommand("createProdData", conn) { CommandType = CommandType.StoredProcedure })
+                            {
+                                ProdDataCommand.Transaction = transAction;
+
+                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i+1; 
+                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
+                                //TODO--> Remove the "Data" from ProductionData Table in DB !!! ProdDataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
+                                //i.e. Update DB so it fits with the ERD.
+                                transAction.Save("PRODDATA_" + i+1);
+                            }
+
                             for (int j = 0; j < o.ProdData[i].Data.Count; j++)                            
                             {
-                                using (SqlCommand ProdDataCommand = new SqlCommand("createProdData", conn) { CommandType = CommandType.StoredProcedure })
+                                //TODO Make createData stored procedure in DB
+                                using (SqlCommand DataCommand = new SqlCommand("createData", conn) { CommandType = CommandType.StoredProcedure })
                                 {
-                                    ProdDataCommand.Transaction = transAction;
+                                    DataCommand.Transaction = transAction;
 
-                                    ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + "_" + j; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProductionData)
-                                    ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                                    ProdDataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
+                                    DataCommand.Parameters.Add("@dataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + 1 + "_DATA_" + j + 1;
+                                    DataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + 1;
+                                    DataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
 
-                                    transAction.Save("PRODDATA_" + i + "_" + j);
+                                    transAction.Save(o.ID + "_PRODDATA_" + i + 1 + "_DATA_" + j + 1);
                                 }
                             }
                         }
@@ -267,14 +212,14 @@ namespace Persistence
                                 {
                                     EPSCommand.Transaction = transAction;
 
-                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.Elements[i].Id + "_EPS_" + i; //TODO: DESIGN HOW THESE IDs ARE SUPPOSED TO WORK (No ID Field in ProgressState)
+                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Id;
                                     EPSCommand.Parameters.Add("@elementID", SqlDbType.VarChar).Value = o.Elements[i].Id;
                                     EPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Comment;
                                     EPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Begun;
                                     EPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Done;
-                                    EPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = j + 4; //TODO: Make sure we handle this in the right spot. Either here or in the controller Layer. ++ How do we ensure that the ProgressState[] on Element are of size 4?
+                                    EPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.Elements[i].ProgressInfo[j].StationNumber; 
 
-                                    transAction.Save("EPS_" + i + "_" + j);
+                                    transAction.Save("EPS_" + i+1 + "_" + j+1);
                                 }
                             }
 
@@ -354,7 +299,8 @@ namespace Persistence
                         string id = row["OrderID"].ToString();
                         string customerID = row["CustomerID"].ToString();
                         string mainOrderID = row["MainOrderID"].ToString();
-                        string OrderNumber = row["OrderNumber"].ToString();
+                        int OrderNumber = (int)row["OrderNumber"];
+                        //TODO: Fix DateTime
                         DateTime deliveryDate = (DateTime)row["DeliveryDate"];
                         DateTime productionDate = (DateTime)row["ProductionDate"];
                         double cubicMeters = (double)row["CubicMeters"];
@@ -371,7 +317,6 @@ namespace Persistence
                                 break;
                             }
                         }
-
                     }
 
                     // 3) Retrieving ElementProgressState
@@ -386,7 +331,8 @@ namespace Persistence
                         string comment = row["Comment"].ToString();
                         bool begun = (bool)row["Begun"];
                         bool done = (bool)row["Done"];
-                        eps.Add(new ProgressState(elementID, comment, begun, done));
+                        int stationNumber = (int)row["StationNumber"];
+                        eps.Add(new ProgressState(elementID, comment, begun, done, stationNumber));
                     }
 
                     // 4) Retrieving Element
@@ -437,7 +383,8 @@ namespace Persistence
                         string comment = row["Comment"].ToString();
                         bool begun = (bool)row["Begun"];
                         bool done = (bool)row["Done"];
-                        ops.Add(new ProgressState(orderID, comment, begun, done));
+                        int stationNumber = (int)row["StationNumber"];
+                        ops.Add(new ProgressState(orderID, comment, begun, done, stationNumber));
                     }
 
 

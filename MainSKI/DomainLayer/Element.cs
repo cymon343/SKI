@@ -10,6 +10,7 @@ namespace DomainLayer
     {
         #region Fields
         private string _id;
+        private string _orderID;
         private string _position;
         private string _text;
         private string _hinge;
@@ -138,10 +139,23 @@ namespace DomainLayer
                 _progressInfo = value;
             }
         }
+
+        public string OrderID
+        {
+            get
+            {
+                return _orderID;
+            }
+
+            set
+            {
+                _orderID = value;
+            }
+        }
         #endregion
 
         #region Constructors
-        public Element(string id, string position, string text, string hinge, string fin, double amount, string unit, string heading, ProgressState[] progressInfo)
+        public Element(string id, string orderID, string position, string text, string hinge, string fin, double amount, string unit, string heading, ProgressState[] progressInfo)
         {
             Id = id;
             Position = position;
@@ -151,7 +165,8 @@ namespace DomainLayer
             Amount = amount;
             Unit = unit;
             Heading = heading;
-            ProgressInfo = progressInfo; //Dangerous? must be size 4
+            OrderID = orderID;
+            ProgressInfo = progressInfo;
         }
 
         #endregion
