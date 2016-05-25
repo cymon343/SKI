@@ -44,6 +44,7 @@
     <Compile Include="Customer.cs" />
     <Compile Include="DBFacade.cs" />
     <Compile Include="Element.cs" />
+    <Compile Include="Link.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderController.cs" />
     <Compile Include="ProductionData.cs" />

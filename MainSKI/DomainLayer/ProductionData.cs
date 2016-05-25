@@ -9,6 +9,7 @@ namespace DomainLayer
     public class ProductionData
     {
         private List<string> _data;
+        private string _orderID;
 
         #region Properties
 
@@ -25,6 +26,19 @@ namespace DomainLayer
             }
         }
 
+        public string OrderID
+        {
+            get
+            {
+                return _orderID;
+            }
+
+            set
+            {
+                _orderID = value;
+            }
+        }
+
         #endregion
 
         public ProductionData()
@@ -32,11 +46,10 @@ namespace DomainLayer
             Data = new List<string>();
         }
 
-        public ProductionData(List<string> data)
+        public ProductionData(string orderID, List<string> data)
         {
             Data = data;
+            OrderID = orderID;
         }
-
-        
     }
 }

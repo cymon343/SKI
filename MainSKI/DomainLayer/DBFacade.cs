@@ -260,6 +260,7 @@ namespace Persistence
             7) Order
             */
             List<Order> orders = new List<Order>();
+            
             try
             {
                 Console.WriteLine(UserName + " trying to access DB...");
@@ -273,6 +274,7 @@ namespace Persistence
                     Console.WriteLine("Retrieving Customers from DB...");
                     SqlCommand cmd = new SqlCommand("SELECT * FROM getCustomers", connection);
                     table.Load(cmd.ExecuteReader());
+
                     List<Customer> customers = new List<Customer>();
                     foreach (DataRow row in table.Rows)
                     {
@@ -288,38 +290,7 @@ namespace Persistence
                         customers.Add(new Customer(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax));
                     }
 
-                    // 2) Retrieving Orders
-                    Console.WriteLine("Retrieving Orders from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getOrders", connection);
-                    table.Load(cmd.ExecuteReader());
-
-
-                    foreach (DataRow row in table.Rows)
-                    {
-                        string id = row["OrderID"].ToString();
-                        string customerID = row["CustomerID"].ToString();
-                        string mainOrderID = row["MainOrderID"].ToString();
-                        int OrderNumber = (int)row["OrderNumber"];
-                        //TODO: Fix DateTime
-                        DateTime deliveryDate = (DateTime)row["DeliveryDate"];
-                        DateTime productionDate = (DateTime)row["ProductionDate"];
-                        double cubicMeters = (double)row["CubicMeters"];
-                        double numberOfElements = (double)row["NumberOfElements"];
-
-                        // 2.1) Adding customer to Order.
-                        for (int i = 0; i < customers.Count; i++)
-                        {
-                            if (customers[i].Id == customerID)
-                            {
-                                orders.Add(Order.CreateOrder(id, customers[i], OrderNumber, deliveryDate, productionDate, cubicMeters, numberOfElements));
-                                customers.RemoveAt(i);
-                                i--;
-                                break;
-                            }
-                        }
-                    }
-
-                    // 3) Retrieving ElementProgressState
+                    // 2) Retrieving ElementProgressState
                     Console.WriteLine("Retrieving Element ProgressStates from DB...");
                     cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);
                     table.Load(cmd.ExecuteReader());
@@ -335,11 +306,11 @@ namespace Persistence
                         eps.Add(new ProgressState(elementID, comment, begun, done, stationNumber));
                     }
 
-                    // 4) Retrieving Element
+                    // 3) Retrieving Element
                     Console.WriteLine("Retrieving Elements from DB...");
                     cmd = new SqlCommand("SELECT * FROM getElements", connection);
                     table.Load(cmd.ExecuteReader());
-
+                    List<Element> elements = new List<Element>();
                     foreach (DataRow row in table.Rows)
                     {
                         string id = row["ElementID"].ToString();
@@ -352,7 +323,7 @@ namespace Persistence
                         string unit = row["Unit"].ToString();
                         string heading = row["Heading"].ToString();
 
-                        // 2.1) Adding ElementProgressStates to Elements
+                        // 3.1) Adding ElementProgressStates to Elements
                         List<ProgressState> tmpEps = new List<ProgressState>();
                         for (int i = 0; i < eps.Count; i++)
                         {
@@ -364,14 +335,10 @@ namespace Persistence
                             }
 
                         }
-                        foreach (Order o in orders)
-                        {
-                            if (o.ID == orderID)
-                                o.Elements.Add(new Element(id, position, text, hinge, fin, amount, unit, heading, tmpEps.ToArray()));
-                        }
+                        elements.Add(new Element(id, orderID, position, text, hinge, fin, amount, unit, heading, tmpEps.ToArray()));
                     }
 
-                    // 5) Retrieving OrderProgressState
+                    // 4) Retrieving OrderProgressState
                     Console.WriteLine("Retrieving Order ProgressStates from DB...");
                     cmd = new SqlCommand("SELECT * FROM getOrderProgressState", connection);
                     table.Load(cmd.ExecuteReader());
@@ -387,56 +354,168 @@ namespace Persistence
                         ops.Add(new ProgressState(orderID, comment, begun, done, stationNumber));
                     }
 
-
-                    // 6) Retrieving Links
+                    // 5) Retrieving Links
                     Console.WriteLine("Retrieving Links from DB...");
                     cmd = new SqlCommand("SELECT * FROM getLinks", connection);
                     table.Load(cmd.ExecuteReader());
 
+                    List<Link> links = new List<Link>();
                     foreach (DataRow row in table.Rows)
                     {
                         string orderID = row["OrderID"].ToString();
                         string theLink = row["TheLink"].ToString();
 
-                        foreach (Order o in orders)
-                        {
-                            if (orderID == o.ID)
-                            {
-                                o.AppendixLinks.Add(theLink);
-                                break;
-                            }
-                        }
+                        links.Add(new Link(orderID, theLink));
                     }
 
+                    // 6) Retrieving Data for Prod. Data.
+
+                    Console.WriteLine("Retrieving Data for Prod. Data from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getData", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    //Workaround Solution - Two lists..
+                    List<string> dataList = new List<string>();
+                    List<string> dataOID = new List<string>();
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string productionDataID = row["ProductionDataID"].ToString();
+                        string data = row["Data"].ToString();
+
+                        dataList.Add(data);
+                        dataOID.Add(productionDataID);
+                    }
                     // 7) Retrieving Production Data
                     Console.WriteLine("Retrieving Production Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getProductionData", connection);
                     table.Load(cmd.ExecuteReader());
 
+                    List<ProductionData> prodData = new List<ProductionData>();
                     foreach (DataRow row in table.Rows)
                     {
+                        string id = row["ProductionDataID"].ToString();
                         string orderID = row["OrderID"].ToString();
-                        string data = row["Data"].ToString();
 
-                        foreach (Order o in orders)
+                        List<string> data = new List<string>();
+                        for(int i = 0; i < dataList.Count; i++)
                         {
-                            if (orderID == o.ID)
+                            if(dataOID[i] == id)
                             {
-                                //LOOK INTO THIS - As Simon said - Something something with the ProductionData Object.
-                                //o.AppendixLinks.Add(theLink);
+                                data.Add(dataList[i]);
+                                dataList.RemoveAt(i);
+                                dataOID.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                        prodData.Add(new ProductionData(orderID, data));
+                    }
+
+                    // 8) Retrieving Orders
+                    Console.WriteLine("Retrieving Orders from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getOrders", connection);
+                    table.Load(cmd.ExecuteReader());
+
+                    foreach (DataRow row in table.Rows)
+                    {
+                        string id = row["OrderID"].ToString();
+                        string customerID = row["CustomerID"].ToString();
+                        string mainOrderID = row["MainOrderID"].ToString();
+                        int orderNumber = (int)row["OrderNumber"];
+                        //TODO: Fix DateTime
+                        DateTime deliveryDate;
+                        DateTime.TryParse(row["DeliveryDate"].ToString(), out deliveryDate);
+                        DateTime productionDate;
+                        DateTime.TryParse(row["ProductionDate"].ToString(), out productionDate);
+                        double cubicMeters = (double)row["CubicMeters"];
+                        double numberOfElements = (double)row["NumberOfElements"];
+
+                        //8.1 Get Customer
+                        Customer tmpCust = null;
+                        for (int i = 0; i < customers.Count; i++)
+                        {
+                            if(customerID == customers[i].Id)
+                            {
+                                tmpCust = customers[i];
+                                customers.RemoveAt(i);
                                 break;
                             }
                         }
-                        connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
 
+                        //8.2 Get Elements
+                        List<Element> tmpElements = new List<Element>();
+                        for (int i = 0; i < elements.Count; i++)
+                        {
+                            if(id == elements[i].OrderID)
+                            {
+                                tmpElements.Add(elements[i]);
+                                elements.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                        //8.3 Get OPS'
+                        List<ProgressState> tmpOPS = new List<ProgressState>();
+                        for (int i = 0; i < tmpOPS.Count; i++)
+                        {
+                            if (id == ops[i].ParentID)
+                            {
+                                tmpOPS.Add(ops[i]);
+                                ops.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                        //8.4 Get Links
+                        List<Link> tmpLinks = new List<Link>();
+                        for (int i = 0; i < links.Count; i++)
+                        {
+                            if (id == links[i].OrderID)
+                            {
+                                tmpLinks.Add(links[i]);
+                                links.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                        //8.5 Get Prod. Data
+                        List<ProductionData> tmpProductionData = new List<ProductionData>();
+                        for (int i = 0; i < prodData.Count; i++)
+                        {
+                            if (id == prodData[i].OrderID)
+                            {
+                                tmpProductionData.Add(prodData[i]);
+                                prodData.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                        //8.6 Create Order.
+                        orders.Add(Order.CreateOrder(id, tmpCust, orderNumber, deliveryDate, productionDate, cubicMeters,
+                                    numberOfElements, tmpLinks, mainOrderID, new List<Order>(), tmpElements, tmpOPS.ToArray(), tmpProductionData));
+                    }
+                    connection.Close();
+                    Console.WriteLine(UserName + " disconnected from DB...");
+
+                    //8.7 Add suborders to orders.
+                    for (int i = 0; i < orders.Count; i++)
+                    {
+                        for (int j = 0; j < orders.Count; j++)
+                        {
+                            if (orders[i].ID == orders[j].MainOrderID)
+                                orders[i].SubOrders.Add(orders[j]);
+                        }
                     }
 
+                    //8.8 Check all main lists are empty. (Ensure we got it all)
+                    int count = eps.Count + ops.Count + elements.Count + links.Count + dataList.Count + prodData.Count + customers.Count;
+                    if(count != 0)
+                    {
+                        throw new UnhappyException();
+                    }
                 }
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                if (e is SqlException)
+                    Console.WriteLine(e.StackTrace);
+                else if (e is UnhappyException)
+                    Console.Write("Unhappy Event: Not all extracted data used! QQ go PEW PEW!");
             }
             return orders;
         }
@@ -658,5 +737,20 @@ namespace Persistence
         }
 
         #endregion
+    }
+
+    public class UnhappyException : Exception
+    {
+        public UnhappyException() { }
+
+        public UnhappyException(string message) : base(message)
+        {
+
+        }
+
+        public UnhappyException(string message, Exception inner) : base(message, inner)
+        {
+
+        }
     }
 }

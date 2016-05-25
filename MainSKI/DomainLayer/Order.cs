@@ -6,20 +6,20 @@ namespace DomainLayer
     public class Order
     {
         #region Fields
-        private string _id; 
-        private Customer _customer; 
-        private int _orderNumber; 
-        private DateTime _deliveryDate; 
-        private DateTime _productionDate; 
-        private double _cubicMeters; 
-        private double _numOfElements; 
-        private List<string> _appendixLinks; 
-        private string _mainOrderID; 
-        private List<Order> _subOrders; 
-        private List<Element> _elements; 
+        private string _id;
+        private Customer _customer;
+        private int _orderNumber;
+        private DateTime _deliveryDate;
+        private DateTime _productionDate;
+        private double _cubicMeters;
+        private double _numOfElements;
+        private List<Link> _appendixLinks;
+        private string _mainOrderID;
+        private List<Order> _subOrders;
+        private List<Element> _elements;
         private ProgressState[] _progressInfo;
         private List<ProductionData> _prodData;
-        
+
 
         #endregion
 
@@ -102,7 +102,7 @@ namespace DomainLayer
             }
         }
 
-        public List<string> AppendixLinks
+        public List<Link> AppendixLinks
         {
             get
             {
@@ -198,10 +198,10 @@ namespace DomainLayer
         #region Constructors
         private Order()
         {
-           //TODO: Determine Constructor.
+            //TODO: Determine Constructor.
         }
 
-        private Order (string id, Customer customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
+        private Order(string id, Customer customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
         {
             ID = id;
             Customer = customer;
@@ -210,9 +210,26 @@ namespace DomainLayer
             ProductionDate = productionDate;
             CubicMeters = cubicMeters;
             NumOfElements = numberOfElements;
-            AppendixLinks = new List<string>();
+            AppendixLinks = new List<Link>();
             Elements = new List<Element>();
             ProdData = new List<ProductionData>();
+        }
+
+        private Order(string _id, Customer _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
+        {
+            this._id = _id;
+            this._customer = _customer;
+            this._orderNumber = _orderNumber;
+            this._deliveryDate = _deliveryDate;
+            this._productionDate = _productionDate;
+            this._cubicMeters = _cubicMeters;
+            this._numOfElements = _numOfElements;
+            this._appendixLinks = _appendixLinks;
+            this._mainOrderID = _mainOrderID;
+            this._subOrders = _subOrders;
+            this._elements = _elements;
+            this._progressInfo = _progressInfo;
+            this._prodData = _prodData;
         }
         #endregion
 
@@ -223,9 +240,9 @@ namespace DomainLayer
             return new Order();
         }
 
-        public static Order CreateOrder(string id, Customer customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
+        public static Order CreateOrder(string _id, Customer _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
         {
-            return new Order(id, customer, orderNumber, deliveryDate, productionDate, cubicMeters, numberOfElements);
+            return new Order(_id, _customer, _orderNumber, _deliveryDate, _productionDate, _cubicMeters, _numOfElements, _appendixLinks, _mainOrderID, _subOrders, _elements, _progressInfo, _prodData);
         }
 
         #endregion
