@@ -44,8 +44,8 @@ namespace DomainLayer
         #region Constructors
         public Link(string orderID, string theLink)
         {
-            OrderID = _orderID;
-            TheLink = _theLink;
+            OrderID = orderID;
+            TheLink = theLink;
         }
 
         #endregion

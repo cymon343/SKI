@@ -19,14 +19,18 @@ namespace TestApplication
         {
             string OrderID = "TEstOrder";
             List<Link> ll = new List<Link>();
-            Link l = new Link("TEST", "TESTLINK");
-            ll.Add(l);
+            Link l1 = new Link("TEST1", "TESTLINK");
+            Link l2 = new Link("TEST2", "TESTLINK");
+            ll.Add(l1);
+            ll.Add(l2);
+
+            Console.WriteLine("Displaying Link Data: ID: " + l1.OrderID);
 
             ProgressState[] EPSArray = new ProgressState[4];
             ProgressState EPS = null;
             for (int i = 0; i < 4; i++)
             {
-                EPS = new ProgressState("TESTELEMENT1", "comemnt", false, false, i + 4);
+                EPS = new ProgressState("TESTELEMENT" + (i+1), "comemnt", false, false, i + 4);
                 EPSArray[i] = EPS;
             }
 
@@ -46,7 +50,7 @@ namespace TestApplication
             ProgressState OPS = null;
             for (int i = 0; i < 4; i++)
             {
-                OPS = new ProgressState(OrderID, "comment", false, false, i + 4);
+                OPS = new ProgressState(OrderID + (i+1), "comment", false, false, i + 4);
                 OPSArray[i] = OPS;
             }
 
@@ -55,17 +59,22 @@ namespace TestApplication
                 new CustomerData("CustIDTEST", "CustNameTEST", "CustAddressTEST", "CustDeliveryAddressTEST", "CustMailTEST", "CustPhoneTEST", "MorePhoneTEST", "moremorePhoneTEST", "faxTEST"),
                 1, DateTime.Now, DateTime.Now, 0.0, 1, ll, "TEST", new List<Order>(), el, EPSArray, Prods);
 
+
+            List<Order> orders = null;
             Console.WriteLine("TEST: Order created in memory");
             if (DBFacade.Instance.CreateOrder(o))
             {
                 Console.WriteLine("TEST: DBFacade returned true on OrderCreation.");
-                List<Order> orders = DBFacade.Instance.RetrieveAllOrders();
+                orders = DBFacade.Instance.RetrieveAllOrders();
                 if (orders != null)
                 {
                     Console.WriteLine("TEST: orders succefully retrieved from DB...");
                 }
             }
 
+
+            Console.WriteLine("Press anything to continue");
+            Console.ReadKey();
 
 
         }

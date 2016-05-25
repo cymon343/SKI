@@ -77,13 +77,11 @@ namespace Persistence
                     conn.Open();
                     Console.WriteLine(UserName + " connected to DB...");
                     using (transAction = conn.BeginTransaction())
-                    {
-                        transAction.Save("BEGIN");
-
+                    { 
                         //#1 Customer
                         using (SqlCommand custCommand = new SqlCommand("createCustomer", conn) { CommandType = CommandType.StoredProcedure })
                         {
-                            custCommand.Transaction = transAction;
+                            custCommand.Transaction = transAction;                            
 
                             custCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id;
                             custCommand.Parameters.Add("@name", SqlDbType.VarChar).Value = o.Customer.Name;
@@ -95,14 +93,17 @@ namespace Persistence
                             custCommand.Parameters.Add("@phoneCell", SqlDbType.VarChar).Value = o.Customer.Name;
                             custCommand.Parameters.Add("@fax", SqlDbType.VarChar).Value = o.Customer.Name;
 
-                            transAction.Save("Customer");
-
+                            custCommand.ExecuteNonQuery();                            
                         }
 
                         //#2 Order
                         using (SqlCommand orderCommand = new SqlCommand("createOrder", conn) { CommandType = CommandType.StoredProcedure })
                         {
                             orderCommand.Transaction = transAction;
+
+                            string deliveryDateString = o.DeliveryDate.Date.ToString("yyyy-MM-dd");
+                            string productionDateString = o.ProductionDate.Date.ToString("yyyy-MM-dd");
+
 
                             orderCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                             orderCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id;
@@ -113,12 +114,12 @@ namespace Persistence
                                 orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
 
                             orderCommand.Parameters.Add("@orderNumber", SqlDbType.Int).Value = o.OrderNumber;
-                            orderCommand.Parameters.Add("@deliveryDate", SqlDbType.Date).Value = o.DeliveryDate.Date;
-                            orderCommand.Parameters.Add("@productionDate", SqlDbType.Date).Value = o.ProductionDate.Date;
+                            orderCommand.Parameters.Add("@deliveryDate", SqlDbType.Date).Value = deliveryDateString;
+                            orderCommand.Parameters.Add("@productionDate", SqlDbType.Date).Value = productionDateString;
                             orderCommand.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
                             orderCommand.Parameters.Add("@numberOfElements", SqlDbType.Float).Value = o.NumOfElements;
 
-                            transAction.Save("Order");
+                            orderCommand.ExecuteNonQuery();
                         }
 
                         //#3 Link
@@ -129,11 +130,11 @@ namespace Persistence
 
                                 linkCommand.Transaction = transAction;
 
-                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i + 1;
+                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + (i + 1);
                                 linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i].TheLink;
 
-                                transAction.Save("Link_" + i);
+                                linkCommand.ExecuteNonQuery();
                             }
                         }
 
@@ -144,14 +145,14 @@ namespace Persistence
                             {
                                 OPSCommand.Transaction = transAction;
 
-                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + i + 1;
+                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + (i + 1);
                                 OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 OPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.ProgressInfo[i].Comment;
                                 OPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.ProgressInfo[i].Begun;
                                 OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;
                                 OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.ProgressInfo[i].StationNumber;
 
-                                transAction.Save("OPS_" + i);
+                                OPSCommand.ExecuteNonQuery();
                             }
                         }
 
@@ -162,9 +163,10 @@ namespace Persistence
                             {
                                 ProdDataCommand.Transaction = transAction;
 
-                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + 1;
+                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1);
                                 ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                                transAction.Save("PRODDATA_" + i + 1);
+
+                                ProdDataCommand.ExecuteNonQuery();                                
                             }
 
                             //#5.1 Data
@@ -174,11 +176,11 @@ namespace Persistence
                                 {
                                     DataCommand.Transaction = transAction;
 
-                                    DataCommand.Parameters.Add("@dataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + 1 + "_DATA_" + j + 1;
-                                    DataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i + 1;
+                                    DataCommand.Parameters.Add("@dataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1) + "_DATA_" + (j + 1);
+                                    DataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1);
                                     DataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
 
-                                    transAction.Save(o.ID + "_PRODDATA_" + i + 1 + "_DATA_" + j + 1);
+                                    DataCommand.ExecuteNonQuery();                                        
                                 }
                             }
                         }
@@ -201,30 +203,31 @@ namespace Persistence
                                 ElementCommand.Parameters.Add("@unit", SqlDbType.VarChar).Value = o.Elements[i].Unit;
                                 ElementCommand.Parameters.Add("@heading", SqlDbType.VarChar).Value = o.Elements[i].Heading;
 
-                                transAction.Save("Element_" + i);
+                                ElementCommand.ExecuteNonQuery();
                             }
 
                             //#6.1 EPS 
                             for (int j = 0; j < o.Elements[i].ProgressInfo.Length; j++)
                             {
                                 using (SqlCommand EPSCommand = new SqlCommand("createEPS", conn) { CommandType = CommandType.StoredProcedure })
-                                {
+                                {                                    
                                     EPSCommand.Transaction = transAction;
 
-                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.ID + "_EPS_" + i + 1;
+                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.Elements[i].Id + "_EPS_" + (j + 1);
                                     EPSCommand.Parameters.Add("@elementID", SqlDbType.VarChar).Value = o.Elements[i].Id;
                                     EPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Comment;
                                     EPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Begun;
                                     EPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Done;
                                     EPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.Elements[i].ProgressInfo[j].StationNumber;
-
-                                    transAction.Save("EPS_" + i + 1 + "_" + j + 1);
+                                    
+                                    EPSCommand.ExecuteNonQuery();                                    
                                 }
                             }
 
                         }
 
-                        transAction.Commit();
+                        transAction.Commit();                        
+                        
                         Console.WriteLine("Order created in DB...");
                         conn.Close();
                         Console.WriteLine(UserName + " disconnected from DB...");
@@ -234,10 +237,19 @@ namespace Persistence
             }
             catch (SqlException e)
             {
-                transAction.Rollback("BEGIN");
+                try
+                {
+                    transAction.Rollback();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Rollback failed. We're all doomed. {0}", ex.StackTrace.ToString());
+                }
+                
                 success = false;
                 Console.WriteLine("Failed to create Order in DB...");
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("[Exception Stacktrace]: " + e.StackTrace);
+                Console.WriteLine("[Exception Message]: " + e.Message);
             }
             return success;
         }
