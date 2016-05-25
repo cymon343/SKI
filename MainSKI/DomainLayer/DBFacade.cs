@@ -128,9 +128,9 @@ namespace Persistence
 
                                 linkCommand.Transaction = transAction;
 
-                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i+1; 
+                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + i+1;
                                 linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                                linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i];
+                                linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i].TheLink;
 
                                 transAction.Save("Link_" + i);
                             }
@@ -154,7 +154,7 @@ namespace Persistence
                             }
                         }
 
-                        //#5 ProductionData  ********** - TODO FIND OUT HOW TO STORE THIS PROPERLY - ********** (Partially Fixed)  //STILL NEED DB-CHANGES!!!!!
+                        //#5 ProductionData
                         for (int i = 0; i < o.ProdData.Count; i++)
                         {
                             using (SqlCommand ProdDataCommand = new SqlCommand("createProdData", conn) { CommandType = CommandType.StoredProcedure })
@@ -162,15 +162,13 @@ namespace Persistence
                                 ProdDataCommand.Transaction = transAction;
 
                                 ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + i+1; 
-                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                                //TODO--> Remove the "Data" from ProductionData Table in DB !!! ProdDataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
-                                //i.e. Update DB so it fits with the ERD.
+                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;                                
                                 transAction.Save("PRODDATA_" + i+1);
                             }
 
+                            //#5.1 Data
                             for (int j = 0; j < o.ProdData[i].Data.Count; j++)                            
-                            {
-                                //TODO Make createData stored procedure in DB
+                            {                                
                                 using (SqlCommand DataCommand = new SqlCommand("createData", conn) { CommandType = CommandType.StoredProcedure })
                                 {
                                     DataCommand.Transaction = transAction;
@@ -205,7 +203,7 @@ namespace Persistence
                                 transAction.Save("Element_" + i);
                             }
 
-                            //#6.1 FOREACH ELEMENT --> Create EPS !!!!
+                            //#6.1 EPS 
                             for (int j = 0; j < o.Elements[i].ProgressInfo.Length; j++)
                             {
                                 using (SqlCommand EPSCommand = new SqlCommand("createEPS", conn) { CommandType = CommandType.StoredProcedure })
