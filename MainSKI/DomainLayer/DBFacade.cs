@@ -210,7 +210,7 @@ namespace Persistence
                                 {
                                     EPSCommand.Transaction = transAction;
 
-                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Id;
+                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.ID + "_EPS_" + i + 1; 
                                     EPSCommand.Parameters.Add("@elementID", SqlDbType.VarChar).Value = o.Elements[i].Id;
                                     EPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Comment;
                                     EPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Begun;
@@ -273,7 +273,7 @@ namespace Persistence
                     SqlCommand cmd = new SqlCommand("SELECT * FROM getCustomers", connection);
                     table.Load(cmd.ExecuteReader());
 
-                    List<Customer> customers = new List<Customer>();
+                    List<CustomerData> customers = new List<CustomerData>();
                     foreach (DataRow row in table.Rows)
                     {
                         string id = row["CustomerID"].ToString();
@@ -285,7 +285,7 @@ namespace Persistence
                         string phoneWork = row["PhoneWork"].ToString();
                         string phoneCell = row["PhoneCell"].ToString();
                         string fax = row["Fax"].ToString();
-                        customers.Add(new Customer(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax));
+                        customers.Add(new CustomerData(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax));
                     }
 
                     // 2) Retrieving ElementProgressState
@@ -428,7 +428,7 @@ namespace Persistence
                         double numberOfElements = (double)row["NumberOfElements"];
 
                         //8.1 Get Customer
-                        Customer tmpCust = null;
+                        CustomerData tmpCust = null;
                         for (int i = 0; i < customers.Count; i++)
                         {
                             if(customerID == customers[i].Id)

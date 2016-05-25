@@ -62,7 +62,7 @@ namespace DomainLayer
             if (mainOrder != null)
             {
                 Order subOrder = Order.CreateOrder(e02);
-                subOrder.MainOrderID = mainOrder;
+                subOrder.MainOrderID = mainOrderID;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -79,7 +79,7 @@ namespace DomainLayer
             if (mainOrder != null)
             {
                 Order subOrder = Order.CreateOrder(e02);
-                subOrder.MainOrderID = mainOrder;
+                subOrder.MainOrderID = mainOrder.ID;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -96,7 +96,7 @@ namespace DomainLayer
             Order mainOrder = FindOrderByID(mainOrderID);
             if (mainOrder != null)
             {
-                subOrder.MainOrderID = mainOrder;
+                subOrder.MainOrderID = mainOrderID;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -112,7 +112,7 @@ namespace DomainLayer
         {
             if (mainOrder != null)
             {
-                subOrder.MainOrderID = mainOrder;
+                subOrder.MainOrderID = mainOrder.ID;
 
                 if (DBFacade.Instance.CreateOrder(subOrder))
                 {
@@ -126,17 +126,25 @@ namespace DomainLayer
 
         public void AddPictureLinkToOrder(string link, string orderID)
         {
+            Link l = new Link(orderID, link);
             Order order = FindOrderByID(orderID);
             if (order != null)
-                order.AppendixLinks.Add(link);
+                order.AppendixLinks.Add(l);
         }
 
         public void AddPictureLinksToOrder(string orderID, params string[] links)
         {
+            List<Link> tmpLinkList = new List<Link>();
+
+            foreach (string l in links)
+            {
+                tmpLinkList.Add(new Link(orderID, l));
+            }
+
             Order order = FindOrderByID(orderID);
             if (order != null)
             {
-                order.AppendixLinks.AddRange(links);
+                order.AppendixLinks.AddRange(tmpLinkList);
             }
         }
 

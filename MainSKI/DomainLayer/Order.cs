@@ -7,7 +7,7 @@ namespace DomainLayer
     {
         #region Fields
         private string _id;
-        private Customer _customer;
+        private CustomerData _customer;
         private int _orderNumber;
         private DateTime _deliveryDate;
         private DateTime _productionDate;
@@ -167,7 +167,7 @@ namespace DomainLayer
             }
         }
 
-        public Customer Customer
+        public CustomerData Customer
         {
             get
             {
@@ -201,7 +201,7 @@ namespace DomainLayer
             //TODO: Determine Constructor.
         }
 
-        private Order(string id, Customer customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
+        private Order(string id, CustomerData customer, int orderNumber, DateTime deliveryDate, DateTime productionDate, double cubicMeters, double numberOfElements)
         {
             ID = id;
             Customer = customer;
@@ -215,7 +215,7 @@ namespace DomainLayer
             ProdData = new List<ProductionData>();
         }
 
-        private Order(string _id, Customer _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
+        private Order(string _id, CustomerData _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
         {
             this._id = _id;
             this._customer = _customer;
@@ -240,7 +240,7 @@ namespace DomainLayer
             return new Order();
         }
 
-        public static Order CreateOrder(string _id, Customer _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
+        public static Order CreateOrder(string _id, CustomerData _customer, int _orderNumber, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
         {
             return new Order(_id, _customer, _orderNumber, _deliveryDate, _productionDate, _cubicMeters, _numOfElements, _appendixLinks, _mainOrderID, _subOrders, _elements, _progressInfo, _prodData);
         }

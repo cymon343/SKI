@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DomainLayer
 {
-    public class Customer
+    public class CustomerData
     {
         #region Fields
         private string _id;
@@ -17,8 +17,7 @@ namespace DomainLayer
         private string _phonePrivate;
         private string _phoneWork;
         private string _phoneCell;
-        private string _fax;
-        List<Order> _orders;
+        private string _fax;        
         #endregion
 
         #region Properties
@@ -141,7 +140,7 @@ namespace DomainLayer
         #endregion
 
         #region Constructors
-        public Customer(string id, string name, string address, string deliveryAddress, string email,
+        public CustomerData(string id, string name, string address, string deliveryAddress, string email,
                         string phonePrivate, string phoneWork, string phoneCell, string fax)
         {
             Id = id;

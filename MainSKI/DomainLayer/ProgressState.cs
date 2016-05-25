@@ -68,20 +68,7 @@ namespace DomainLayer
             {
                 _parentID = value;
             }
-        }
-
-        public string Id
-        {
-            get
-            {
-                return _id;
-            }
-
-            set
-            {
-                _id = value;
-            }
-        }
+        }    
 
         public int StationNumber
         {
