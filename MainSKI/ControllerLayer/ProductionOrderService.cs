@@ -43,8 +43,7 @@ namespace ControllerLayer
         public List<Order> GetOrders()
         {
             DateTime fromDate = DateTime.Now;
-            fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
-            //TODO: Discuss with SBL - No need to call GetOrderByDeliveryDate as domain will always be up to date, and handle all database interactions- Thus accessing list directly is likely more efficient?!
+            fromDate = fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
         }
         

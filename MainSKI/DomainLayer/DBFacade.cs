@@ -93,7 +93,8 @@ namespace Persistence
                             custCommand.Parameters.Add("@phoneCell", SqlDbType.VarChar).Value = o.Customer.Name;
                             custCommand.Parameters.Add("@fax", SqlDbType.VarChar).Value = o.Customer.Name;
 
-                            custCommand.ExecuteNonQuery();                            
+                            if (custCommand.ExecuteNonQuery() < 1)
+                                throw new UnhappyException("Failed to create Customer in DB");
                         }
 
                         //#2 Order
@@ -119,7 +120,8 @@ namespace Persistence
                             orderCommand.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
                             orderCommand.Parameters.Add("@numberOfElements", SqlDbType.Float).Value = o.NumOfElements;
 
-                            orderCommand.ExecuteNonQuery();
+                            if (orderCommand.ExecuteNonQuery() < 1)
+                                throw new UnhappyException("Failed to create Order in DB");                            
                         }
 
                         //#3 Link
@@ -134,7 +136,8 @@ namespace Persistence
                                 linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i].TheLink;
 
-                                linkCommand.ExecuteNonQuery();
+                                if (linkCommand.ExecuteNonQuery() < 1)
+                                    throw new UnhappyException("Failed to create Link in DB");
                             }
                         }
 
@@ -152,7 +155,8 @@ namespace Persistence
                                 OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;
                                 OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.ProgressInfo[i].StationNumber;
 
-                                OPSCommand.ExecuteNonQuery();
+                                if (OPSCommand.ExecuteNonQuery() < 1)
+                                    throw new UnhappyException("Failed to create OPS in DB");
                             }
                         }
 
@@ -166,7 +170,8 @@ namespace Persistence
                                 ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1);
                                 ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
 
-                                ProdDataCommand.ExecuteNonQuery();                                
+                                if (ProdDataCommand.ExecuteNonQuery() < 1)
+                                    throw new UnhappyException("Failed to create Production Data in DB");
                             }
 
                             //#5.1 Data
@@ -180,7 +185,8 @@ namespace Persistence
                                     DataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1);
                                     DataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
 
-                                    DataCommand.ExecuteNonQuery();                                        
+                                    if (DataCommand.ExecuteNonQuery() < 1)
+                                        throw new UnhappyException("Failed to create Data Link in DB");
                                 }
                             }
                         }
@@ -203,7 +209,8 @@ namespace Persistence
                                 ElementCommand.Parameters.Add("@unit", SqlDbType.VarChar).Value = o.Elements[i].Unit;
                                 ElementCommand.Parameters.Add("@heading", SqlDbType.VarChar).Value = o.Elements[i].Heading;
 
-                                ElementCommand.ExecuteNonQuery();
+                                if (ElementCommand.ExecuteNonQuery() < 1)
+                                    throw new UnhappyException("Failed to create Element Link in DB");
                             }
 
                             //#6.1 EPS 
@@ -219,8 +226,9 @@ namespace Persistence
                                     EPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Begun;
                                     EPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Done;
                                     EPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.Elements[i].ProgressInfo[j].StationNumber;
-                                    
-                                    EPSCommand.ExecuteNonQuery();                                    
+
+                                    if (EPSCommand.ExecuteNonQuery() < 1)
+                                        throw new UnhappyException("Failed to create EPS in DB");
                                 }
                             }
 
@@ -235,8 +243,11 @@ namespace Persistence
                     }
                 }
             }
-            catch (SqlException e)
-            {
+            catch (Exception e)
+            {                
+                if (e is UnhappyException)
+                    Console.Write("[Unhappy Event]: Failed to create some table in DB");
+
                 try
                 {
                     transAction.Rollback();
@@ -300,10 +311,13 @@ namespace Persistence
                         string fax = row["Fax"].ToString();
                         customers.Add(new CustomerData(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax));
                     }
+                    Console.WriteLine("Done.");
 
                     // 2) Retrieving ElementProgressState
-                    Console.WriteLine("Retrieving Element ProgressStates from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);
+                    Console.WriteLine("Retrieving ElementProgressStates from DB...");
+                    cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);                   
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
 
                     List<ProgressState> eps = new List<ProgressState>();
@@ -316,11 +330,15 @@ namespace Persistence
                         int stationNumber = (int)row["StationNumber"];
                         eps.Add(new ProgressState(elementID, comment, begun, done, stationNumber));
                     }
+                    Console.WriteLine("Done.");
 
                     // 3) Retrieving Element
                     Console.WriteLine("Retrieving Elements from DB...");
                     cmd = new SqlCommand("SELECT * FROM getElements", connection);
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
+
                     List<Element> elements = new List<Element>();
                     foreach (DataRow row in table.Rows)
                     {
@@ -348,10 +366,13 @@ namespace Persistence
                         }
                         elements.Add(new Element(id, orderID, position, text, hinge, fin, amount, unit, heading, tmpEps.ToArray()));
                     }
+                    Console.WriteLine("Done.");
 
                     // 4) Retrieving OrderProgressState
                     Console.WriteLine("Retrieving Order ProgressStates from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getOrderProgressState", connection);
+                    cmd = new SqlCommand("SELECT * FROM getOrderProgressStates", connection);
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
 
                     List<ProgressState> ops = new List<ProgressState>();
@@ -364,10 +385,13 @@ namespace Persistence
                         int stationNumber = (int)row["StationNumber"];
                         ops.Add(new ProgressState(orderID, comment, begun, done, stationNumber));
                     }
+                    Console.WriteLine("Done.");
 
                     // 5) Retrieving Links
                     Console.WriteLine("Retrieving Links from DB...");
                     cmd = new SqlCommand("SELECT * FROM getLinks", connection);
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
 
                     List<Link> links = new List<Link>();
@@ -378,11 +402,13 @@ namespace Persistence
 
                         links.Add(new Link(orderID, theLink));
                     }
+                    Console.WriteLine("Done.");
 
                     // 6) Retrieving Data for Prod. Data.
-
                     Console.WriteLine("Retrieving Data for Prod. Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getData", connection);
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
 
                     //Workaround Solution - Two lists..
@@ -396,9 +422,13 @@ namespace Persistence
                         dataList.Add(data);
                         dataOID.Add(productionDataID);
                     }
+                    Console.WriteLine("Done.");
+
                     // 7) Retrieving Production Data
                     Console.WriteLine("Retrieving Production Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getProductionData", connection);
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
 
                     List<ProductionData> prodData = new List<ProductionData>();
@@ -420,10 +450,13 @@ namespace Persistence
                         }
                         prodData.Add(new ProductionData(orderID, data));
                     }
+                    Console.WriteLine("Done.");
 
                     // 8) Retrieving Orders
                     Console.WriteLine("Retrieving Orders from DB...");
                     cmd = new SqlCommand("SELECT * FROM getOrders", connection);
+
+                    table = new DataTable();
                     table.Load(cmd.ExecuteReader());
 
                     foreach (DataRow row in table.Rows)
@@ -465,7 +498,7 @@ namespace Persistence
                         }
                         //8.3 Get OPS'
                         List<ProgressState> tmpOPS = new List<ProgressState>();
-                        for (int i = 0; i < tmpOPS.Count; i++)
+                        for (int i = 0; i < ops.Count; i++)
                         {
                             if (id == ops[i].ParentID)
                             {
@@ -500,6 +533,7 @@ namespace Persistence
                         orders.Add(Order.CreateOrder(id, tmpCust, orderNumber, deliveryDate, productionDate, cubicMeters,
                                     numberOfElements, tmpLinks, mainOrderID, new List<Order>(), tmpElements, tmpOPS.ToArray(), tmpProductionData));
                     }
+                    Console.WriteLine("Done.");
                     connection.Close();
                     Console.WriteLine(UserName + " disconnected from DB...");
 
@@ -517,16 +551,21 @@ namespace Persistence
                     int count = eps.Count + ops.Count + elements.Count + links.Count + dataList.Count + prodData.Count + customers.Count;
                     if(count != 0)
                     {
-                        throw new UnhappyException();
+                        throw new UnhappyException("Failed to use all data from DB.");
                     }
-                }
+                }                
             }
             catch (Exception e)
             {
-                if (e is SqlException)
-                    Console.WriteLine(e.StackTrace);
-                else if (e is UnhappyException)
+                if (e is UnhappyException)
                     Console.Write("Unhappy Event: Not all extracted data used! QQ go PEW PEW!");
+                else
+                {
+                    Console.WriteLine("[StackTrace]: " + e.StackTrace);
+                    Console.WriteLine("[Message]:" + e.Message);
+                }
+                
+
             }
             return orders;
         }

@@ -11,11 +11,30 @@ namespace TestApplication
     class Program
     {
         public static void Main(string[] args)
-        {
-            RunTest();
+        {           
+            //CreateOrderTest();
+            RetrieveordersTest();
+
+            Console.WriteLine("Press anything to continue");
+            Console.ReadKey();
         }
 
-        public static void RunTest()
+        private static void RetrieveordersTest()
+        {
+            List<Order> orders = null;
+
+            orders = DBFacade.Instance.RetrieveAllOrders();
+            if (orders != null)
+            {
+                if (orders.Count >0)
+                {
+                    Console.WriteLine("TEST: orders succefully retrieved from DB...");
+                    Console.WriteLine("ID of First Order: " + orders[0].ID);
+                }
+            }
+        }
+
+        private static void CreateOrderTest()
         {
             string OrderID = "TEstOrder";
             List<Link> ll = new List<Link>();
@@ -30,7 +49,7 @@ namespace TestApplication
             ProgressState EPS = null;
             for (int i = 0; i < 4; i++)
             {
-                EPS = new ProgressState("TESTELEMENT" + (i+1), "comemnt", false, false, i + 4);
+                EPS = new ProgressState("TESTELEMENT" + (i + 1), "comemnt", false, false, i + 4);
                 EPSArray[i] = EPS;
             }
 
@@ -50,7 +69,7 @@ namespace TestApplication
             ProgressState OPS = null;
             for (int i = 0; i < 4; i++)
             {
-                OPS = new ProgressState(OrderID + (i+1), "comment", false, false, i + 4);
+                OPS = new ProgressState(OrderID + (i + 1), "comment", false, false, i + 4);
                 OPSArray[i] = OPS;
             }
 
@@ -59,24 +78,11 @@ namespace TestApplication
                 new CustomerData("CustIDTEST", "CustNameTEST", "CustAddressTEST", "CustDeliveryAddressTEST", "CustMailTEST", "CustPhoneTEST", "MorePhoneTEST", "moremorePhoneTEST", "faxTEST"),
                 1, DateTime.Now, DateTime.Now, 0.0, 1, ll, "TEST", new List<Order>(), el, EPSArray, Prods);
 
+            Console.WriteLine("TEST: Order created in memory...");
 
-            List<Order> orders = null;
-            Console.WriteLine("TEST: Order created in memory");
+
             if (DBFacade.Instance.CreateOrder(o))
-            {
-                Console.WriteLine("TEST: DBFacade returned true on OrderCreation.");
-                orders = DBFacade.Instance.RetrieveAllOrders();
-                if (orders != null)
-                {
-                    Console.WriteLine("TEST: orders succefully retrieved from DB...");
-                }
-            }
-
-
-            Console.WriteLine("Press anything to continue");
-            Console.ReadKey();
-
-
-        }
+                Console.WriteLine("TEST: DBFacade returned true on OrderCreation....");
+        }       
     }
 }
