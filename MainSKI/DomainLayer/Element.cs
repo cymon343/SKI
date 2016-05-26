@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DomainLayer
 {
+    [DataContract]
     public class Element
     {
         #region Fields
@@ -23,6 +25,7 @@ namespace DomainLayer
         #endregion
 
         #region Properties
+        [DataMember]
         public string Id
         {
             get
@@ -35,7 +38,7 @@ namespace DomainLayer
                 _id = value;
             }
         }
-
+        [DataMember]
         public string Position
         {
             get
@@ -48,7 +51,7 @@ namespace DomainLayer
                 _position = value;
             }
         }
-
+        [DataMember]
         public string Text
         {
             get
@@ -61,7 +64,7 @@ namespace DomainLayer
                 _text = value;
             }
         }
-
+        [DataMember]
         public string Hinge
         {
             get
@@ -74,7 +77,7 @@ namespace DomainLayer
                 _hinge = value;
             }
         }
-
+        [DataMember]
         public string Fin
         {
             get
@@ -87,7 +90,7 @@ namespace DomainLayer
                 _fin = value;
             }
         }
-
+        [DataMember]
         public double Amount
         {
             get
@@ -100,7 +103,7 @@ namespace DomainLayer
                 _amount = value;
             }
         }
-
+        [DataMember]
         public string Unit
         {
             get
@@ -113,7 +116,7 @@ namespace DomainLayer
                 _unit = value;
             }
         }
-
+        [DataMember]
         public string Heading
         {
             get
@@ -126,7 +129,7 @@ namespace DomainLayer
                 _heading = value;
             }
         }
-
+        [DataMember]
         public ProgressState[] ProgressInfo
         {
             get
@@ -139,7 +142,7 @@ namespace DomainLayer
                 _progressInfo = value;
             }
         }
-
+        [DataMember]
         public string OrderID
         {
             get

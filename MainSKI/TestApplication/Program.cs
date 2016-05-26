@@ -12,7 +12,7 @@ namespace TestApplication
     {
         public static void Main(string[] args)
         {           
-            //CreateOrderTest();
+            CreateOrderTest();
             RetrieveordersTest();
 
             Console.WriteLine("Press anything to continue");
@@ -36,7 +36,13 @@ namespace TestApplication
 
         private static void CreateOrderTest()
         {
-            string OrderID = "TEstOrder";
+
+            int OrderNum = 1234;
+            int OrderSubject = 1;
+            int OrderAlt = 2;
+            string OrderID = "" + OrderNum + "/" + OrderSubject + "/" + OrderAlt;
+
+
             List<Link> ll = new List<Link>();
             Link l1 = new Link("TEST1", "TESTLINK");
             Link l2 = new Link("TEST2", "TESTLINK");
@@ -76,7 +82,7 @@ namespace TestApplication
 
             Order o = Order.CreateOrder(OrderID,
                 new CustomerData("CustIDTEST", "CustNameTEST", "CustAddressTEST", "CustDeliveryAddressTEST", "CustMailTEST", "CustPhoneTEST", "MorePhoneTEST", "moremorePhoneTEST", "faxTEST"),
-                1, DateTime.Now, DateTime.Now, 0.0, 1, ll, "TEST", new List<Order>(), el, EPSArray, Prods);
+                OrderNum,OrderSubject,OrderAlt,  DateTime.Now, DateTime.Now, 0.0, 1, ll, "TEST", new List<Order>(), el, EPSArray, Prods);
 
             Console.WriteLine("TEST: Order created in memory...");
 

@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DomainLayer
 {
+    [DataContract]
     public class ProductionData
     {
         private List<string> _data;
         private string _orderID;
 
         #region Properties
-
+        [DataMember]
         public List<string> Data
         {
             get
@@ -25,7 +27,7 @@ namespace DomainLayer
                 _data = value;
             }
         }
-
+        [DataMember]
         public string OrderID
         {
             get
@@ -41,6 +43,7 @@ namespace DomainLayer
 
         #endregion
 
+        #region Constructors
         public ProductionData()
         {
             Data = new List<string>();
@@ -51,5 +54,6 @@ namespace DomainLayer
             Data = data;
             OrderID = orderID;
         }
+        #endregion
     }
 }

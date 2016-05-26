@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DomainLayer
 {
+    [DataContract]
     public class CustomerData
     {
         #region Fields
@@ -21,6 +23,7 @@ namespace DomainLayer
         #endregion
 
         #region Properties
+        [DataMember]
         public string Id
         {
             get
@@ -33,7 +36,7 @@ namespace DomainLayer
                 _id = value;
             }
         }
-
+        [DataMember]
         public string Name
         {
             get
@@ -46,7 +49,7 @@ namespace DomainLayer
                 _name = value;
             }
         }
-
+        [DataMember]
         public string Address
         {
             get
@@ -59,7 +62,7 @@ namespace DomainLayer
                 _address = value;
             }
         }
-
+        [DataMember]
         public string DeliveryAddress
         {
             get
@@ -72,7 +75,7 @@ namespace DomainLayer
                 _deliveryAddress = value;
             }
         }
-
+        [DataMember]
         public string Email
         {
             get
@@ -85,7 +88,7 @@ namespace DomainLayer
                 _email = value;
             }
         }
-
+        [DataMember]
         public string PhonePrivate
         {
             get
@@ -98,7 +101,7 @@ namespace DomainLayer
                 _phonePrivate = value;
             }
         }
-
+        [DataMember]
         public string PhoneWork
         {
             get
@@ -111,7 +114,7 @@ namespace DomainLayer
                 _phoneWork = value;
             }
         }
-
+        [DataMember]
         public string PhoneCell
         {
             get
@@ -124,7 +127,7 @@ namespace DomainLayer
                 _phoneCell = value;
             }
         }
-
+        [DataMember]
         public string Fax
         {
             get

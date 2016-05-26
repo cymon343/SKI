@@ -115,6 +115,8 @@ namespace Persistence
                                 orderCommand.Parameters.Add("@mainOrderID", SqlDbType.VarChar).Value = null;
 
                             orderCommand.Parameters.Add("@orderNumber", SqlDbType.Int).Value = o.OrderNumber;
+                            orderCommand.Parameters.Add("@orderSubject", SqlDbType.Int).Value = o.OrderSubject;
+                            orderCommand.Parameters.Add("@orderAlternative", SqlDbType.Int).Value = o.OrderAlternative;
                             orderCommand.Parameters.Add("@deliveryDate", SqlDbType.Date).Value = deliveryDateString;
                             orderCommand.Parameters.Add("@productionDate", SqlDbType.Date).Value = productionDateString;
                             orderCommand.Parameters.Add("@cubicMeters", SqlDbType.Float).Value = o.CubicMeters;
@@ -465,13 +467,15 @@ namespace Persistence
                         string customerID = row["CustomerID"].ToString();
                         string mainOrderID = row["MainOrderID"].ToString();
                         int orderNumber = (int)row["OrderNumber"];
-                        //TODO: Fix DateTime
+                        int orderSubject = (int)row["OrderAlternative"];
+                        int orderAlternative = (int)row["OrderAlternative"];
                         DateTime deliveryDate;
                         DateTime.TryParse(row["DeliveryDate"].ToString(), out deliveryDate);
                         DateTime productionDate;
                         DateTime.TryParse(row["ProductionDate"].ToString(), out productionDate);
                         double cubicMeters = (double)row["CubicMeters"];
                         double numberOfElements = (double)row["NumberOfElements"];
+                        
 
                         //8.1 Get Customer
                         CustomerData tmpCust = null;
@@ -530,7 +534,7 @@ namespace Persistence
                             }
                         }
                         //8.6 Create Order.
-                        orders.Add(Order.CreateOrder(id, tmpCust, orderNumber, deliveryDate, productionDate, cubicMeters,
+                        orders.Add(Order.CreateOrder(id, tmpCust, orderNumber, orderSubject, orderAlternative, deliveryDate, productionDate, cubicMeters,
                                     numberOfElements, tmpLinks, mainOrderID, new List<Order>(), tmpElements, tmpOPS.ToArray(), tmpProductionData));
                     }
                     Console.WriteLine("Done.");

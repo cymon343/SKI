@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DomainLayer
 {
+    [DataContract]
     public class ProgressState
     {
         #region fields
@@ -18,6 +20,7 @@ namespace DomainLayer
         #endregion
 
         #region properties
+        [DataMember]
         public string Comment
         {
             get
@@ -30,7 +33,7 @@ namespace DomainLayer
                 _comment = value;
             }
         }
-
+        [DataMember]
         public bool Begun
         {
             get
@@ -43,7 +46,7 @@ namespace DomainLayer
                 _begun = value;
             }
         }
-
+        [DataMember]
         public bool Done
         {
             get
@@ -56,7 +59,7 @@ namespace DomainLayer
                 _done = value;
             }
         }
-
+        [DataMember]
         public string ParentID
         {
             get
@@ -68,8 +71,8 @@ namespace DomainLayer
             {
                 _parentID = value;
             }
-        }    
-
+        }
+        [DataMember]
         public int StationNumber
         {
             get

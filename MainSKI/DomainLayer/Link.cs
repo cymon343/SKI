@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DomainLayer
 {
+    [DataContract]
     public class Link
     {
         #region Fields
@@ -14,6 +16,7 @@ namespace DomainLayer
         #endregion
 
         #region Properties
+        [DataMember]
         public string OrderID
         {
             get
@@ -26,7 +29,7 @@ namespace DomainLayer
                 _orderID = value;
             }
         }
-
+        [DataMember]
         public string TheLink
         {
             get

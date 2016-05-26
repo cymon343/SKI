@@ -14,11 +14,14 @@ namespace ControllerLayer
     {
         [OperationContract]
         bool AddOrder(string path);
+
         [OperationContract]
         bool AddSubOrderToOrder(string path, string orderID);
 
         [OperationContract]
         string TestService(string test, string testy);
 
+        [OperationContract]
+        List<Order> GetOrders();
     }     
 }
