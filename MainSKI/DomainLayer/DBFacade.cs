@@ -134,7 +134,7 @@ namespace Persistence
 
                                 linkCommand.Transaction = transAction;
 
-                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.ID + "_LINK_" + (i + 1);
+                                linkCommand.Parameters.Add("@linkID", SqlDbType.VarChar).Value = o.AppendixLinks[i].ID;
                                 linkCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 linkCommand.Parameters.Add("@theLink", SqlDbType.VarChar).Value = o.AppendixLinks[i].TheLink;
 
@@ -150,7 +150,7 @@ namespace Persistence
                             {
                                 OPSCommand.Transaction = transAction;
 
-                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ID + "_OPS_" + (i + 1);
+                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ProgressInfo[i].ID;
                                 OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
                                 OPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.ProgressInfo[i].Comment;
                                 OPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.ProgressInfo[i].Begun;
@@ -169,8 +169,8 @@ namespace Persistence
                             {
                                 ProdDataCommand.Transaction = transAction;
 
-                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1);
-                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
+                                ProdDataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ProdData[i].ID;
+                                ProdDataCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ProdData[i].OrderID;
 
                                 if (ProdDataCommand.ExecuteNonQuery() < 1)
                                     throw new UnhappyException("Failed to create Production Data in DB");
@@ -183,8 +183,8 @@ namespace Persistence
                                 {
                                     DataCommand.Transaction = transAction;
 
-                                    DataCommand.Parameters.Add("@dataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1) + "_DATA_" + (j + 1);
-                                    DataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ID + "_PRODDATA_" + (i + 1);
+                                    DataCommand.Parameters.Add("@dataID", SqlDbType.VarChar).Value = o.ProdData[i].ID + "_DATA_" + (j + 1);
+                                    DataCommand.Parameters.Add("@productionDataID", SqlDbType.VarChar).Value = o.ProdData[i].ID;
                                     DataCommand.Parameters.Add("@data", SqlDbType.VarChar).Value = o.ProdData[i].Data[j];
 
                                     if (DataCommand.ExecuteNonQuery() < 1)
@@ -222,7 +222,7 @@ namespace Persistence
                                 {                                    
                                     EPSCommand.Transaction = transAction;
 
-                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.Elements[i].Id + "_EPS_" + (j + 1);
+                                    EPSCommand.Parameters.Add("@EPSID", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].ID;
                                     EPSCommand.Parameters.Add("@elementID", SqlDbType.VarChar).Value = o.Elements[i].Id;
                                     EPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.Elements[i].ProgressInfo[j].Comment;
                                     EPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.Elements[i].ProgressInfo[j].Begun;
@@ -325,12 +325,13 @@ namespace Persistence
                     List<ProgressState> eps = new List<ProgressState>();
                     foreach (DataRow row in table.Rows)
                     {
+                        string EPSID = row["EPSID"].ToString();
                         string elementID = row["ElementID"].ToString();
                         string comment = row["Comment"].ToString();
                         bool begun = (bool)row["Begun"];
                         bool done = (bool)row["Done"];
                         int stationNumber = (int)row["StationNumber"];
-                        eps.Add(new ProgressState(elementID, comment, begun, done, stationNumber));
+                        eps.Add(new ProgressState(EPSID, elementID, comment, begun, done, stationNumber));
                     }
                     Console.WriteLine("Done.");
 
@@ -380,12 +381,13 @@ namespace Persistence
                     List<ProgressState> ops = new List<ProgressState>();
                     foreach (DataRow row in table.Rows)
                     {
+                        string OPSID = row["OPSID"].ToString();
                         string orderID = row["OrderID"].ToString();
                         string comment = row["Comment"].ToString();
                         bool begun = (bool)row["Begun"];
                         bool done = (bool)row["Done"];
                         int stationNumber = (int)row["StationNumber"];
-                        ops.Add(new ProgressState(orderID, comment, begun, done, stationNumber));
+                        ops.Add(new ProgressState(OPSID, orderID, comment, begun, done, stationNumber));
                     }
                     Console.WriteLine("Done.");
 
@@ -399,10 +401,11 @@ namespace Persistence
                     List<Link> links = new List<Link>();
                     foreach (DataRow row in table.Rows)
                     {
+                        string linkID = row["LinkID"].ToString();
                         string orderID = row["OrderID"].ToString();
                         string theLink = row["TheLink"].ToString();
 
-                        links.Add(new Link(orderID, theLink));
+                        links.Add(new Link(linkID, orderID, theLink));
                     }
                     Console.WriteLine("Done.");
 
@@ -436,6 +439,7 @@ namespace Persistence
                     List<ProductionData> prodData = new List<ProductionData>();
                     foreach (DataRow row in table.Rows)
                     {
+                        string prodDataID = row["ProductionDataID"].ToString();
                         string id = row["ProductionDataID"].ToString();
                         string orderID = row["OrderID"].ToString();
 
@@ -450,7 +454,7 @@ namespace Persistence
                                 i--;
                             }
                         }
-                        prodData.Add(new ProductionData(orderID, data));
+                        prodData.Add(new ProductionData(prodDataID, orderID, data));
                     }
                     Console.WriteLine("Done.");
 

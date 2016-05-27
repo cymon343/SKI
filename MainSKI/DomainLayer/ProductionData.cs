@@ -10,8 +10,11 @@ namespace DomainLayer
     [DataContract]
     public class ProductionData
     {
+        #region Fields
+        private string _id;
         private List<string> _data;
         private string _orderID;
+        #endregion
 
         #region Properties
         [DataMember]
@@ -40,17 +43,25 @@ namespace DomainLayer
                 _orderID = value;
             }
         }
+        [DataMember]
+        public string ID
+        {
+            get
+            {
+                return _id;
+            }
 
+            set
+            {
+                _id = value;
+            }
+        }
         #endregion
 
-        #region Constructors
-        public ProductionData()
+        #region Constructors   
+        public ProductionData(string ID, string orderID, List<string> data)
         {
-            Data = new List<string>();
-        }
-
-        public ProductionData(string orderID, List<string> data)
-        {
+            this.ID = ID;
             Data = data;
             OrderID = orderID;
         }
