@@ -149,12 +149,20 @@ namespace DomainLayer
             Id = id;
             Name = name;
             Address = address;
-            DeliveryAddress = address;
+            DeliveryAddress = deliveryAddress;
             Email = email;
             PhonePrivate = phonePrivate;
             PhoneWork = phoneWork;
             PhoneCell = phoneCell;
             Fax = fax;
+        }
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return "Name & Address: " + Name + " - " + Address + "\nDelivery Address: " + DeliveryAddress; 
         }
         #endregion
     }
