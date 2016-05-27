@@ -11,6 +11,7 @@ namespace DomainLayer
     public class ProgressState
     {
         #region fields
+        private string _id;
         private string _comment;
         private bool _begun;
         private bool _done;
@@ -85,12 +86,26 @@ namespace DomainLayer
                 _stationNumber = value;
             }
         }
+        [DataMember]
+        public string ID
+        {
+            get
+            {
+                return _id;
+            }
+
+            set
+            {
+                _id = value;
+            }
+        }
         #endregion
 
         #region Constructors
 
-        public ProgressState(string parentID, string comment, bool begun, bool done, int stationNumber)
+        public ProgressState(string ID, string parentID, string comment, bool begun, bool done, int stationNumber)
         {
+            this.ID = ID;
             ParentID = parentID;
             Comment = comment;
             Begun = begun;

@@ -126,7 +126,7 @@ namespace DomainLayer
 
         public void AddPictureLinkToOrder(string link, string orderID)
         {
-            Link l = new Link(orderID, link);
+            Link l = new Link(orderID, link); //Missing ID
             Order order = FindOrderByID(orderID);
             if (order != null)
                 order.AppendixLinks.Add(l);
@@ -138,7 +138,7 @@ namespace DomainLayer
 
             foreach (string l in links)
             {
-                tmpLinkList.Add(new Link(orderID, l));
+                tmpLinkList.Add(new Link(orderID, l)); //Missing ID
             }
 
             Order order = FindOrderByID(orderID);

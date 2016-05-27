@@ -58,8 +58,8 @@ namespace TestApplication
 
 
             List<Link> ll = new List<Link>();
-            Link l1 = new Link("TEST1", "TESTLINK");
-            Link l2 = new Link("TEST2", "TESTLINK");
+            Link l1 = new Link("LinkID1", "TEST1", "TESTLINK");
+            Link l2 = new Link("LinkID2", "TEST2", "TESTLINK");
             ll.Add(l1);
             ll.Add(l2);
 
@@ -69,7 +69,7 @@ namespace TestApplication
             ProgressState EPS = null;
             for (int i = 0; i < 4; i++)
             {
-                EPS = new ProgressState("TESTELEMENT" + (i + 1), "comemnt", false, false, i + 4);
+                EPS = new ProgressState("EPSID1", "TESTELEMENT" + (i + 1), "this is a comment", false, false, i + 4);
                 EPSArray[i] = EPS;
             }
 
@@ -81,7 +81,7 @@ namespace TestApplication
             List<string> testData = new List<string>();
             testData.Add("This is TestData");
             testData.Add("This is more TestData");
-            ProductionData pd = new ProductionData("PD1", testData);
+            ProductionData pd = new ProductionData("prodID1", "PD1", testData);
             Prods.Add(pd);
 
 
@@ -89,7 +89,7 @@ namespace TestApplication
             ProgressState OPS = null;
             for (int i = 0; i < 4; i++)
             {
-                OPS = new ProgressState(OrderID + (i + 1), "comment", false, false, i + 4);
+                OPS = new ProgressState("OPSID1", OrderID + (i + 1), "comment", false, false, i + 4);
                 OPSArray[i] = OPS;
             }
 
