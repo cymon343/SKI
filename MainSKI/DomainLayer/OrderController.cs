@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Persistence;
 
-
 namespace DomainLayer
 {
     public class OrderController
@@ -126,7 +125,7 @@ namespace DomainLayer
 
         public void AddPictureLinkToOrder(string link, string orderID)
         {
-            Link l = new Link(orderID, link); //Missing ID
+            Link l = new Link("LNK_" + DateTime.Now.ToString(), orderID, link); //ID May need improvement.
             Order order = FindOrderByID(orderID);
             if (order != null)
                 order.AppendixLinks.Add(l);
@@ -138,7 +137,7 @@ namespace DomainLayer
 
             foreach (string l in links)
             {
-                tmpLinkList.Add(new Link(orderID, l)); //Missing ID
+                tmpLinkList.Add(new Link("LNK_" + DateTime.Now.ToString(), orderID, l)); //ID May need improvement.
             }
 
             Order order = FindOrderByID(orderID);

@@ -37,15 +37,15 @@ namespace TestApplication
 
         private static void CreateOrderTeste02()
         {
-            string e02Path = @"C:\Users\tm_ma\Google Drive\Project SKI Kitchen\01 Assignment\Material From SKI\";
+            string e02Path = @"N:\Google Drive\Project SKI Kitchen\01 Assignment\Material From SKI\";
             string e02FileName = "w0000520.e02";
             string e02FileName2 = "w0000524.e02";
             string e02FileName3 = "w0000293 Ascii file with all info.e02";
-            Order.CreateOrder(e02Path + e02FileName);
-            Console.WriteLine("\n");
+           // Order.CreateOrder(e02Path + e02FileName);
+           // Console.WriteLine("\n");
             Order.CreateOrder(e02Path + e02FileName2);
-            Console.WriteLine("\n");
-            Order.CreateOrder(e02Path + e02FileName3);
+            //Console.WriteLine("\n");
+            //Order.CreateOrder(e02Path + e02FileName3);
         }
 
         private static void CreateOrderTest()

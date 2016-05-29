@@ -179,5 +179,17 @@ namespace DomainLayer
         }
 
         #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Element ID: " + Id + " Order ID: " + OrderID + " - Heading: " + Heading);
+            sb.AppendLine("TEXT:\n" + Text);
+            sb.AppendLine("Pos: " + Position + " - Hinge: " + Hinge + " - Finish: " + Fin + " - Amount: " + Amount + " " + Unit);
+            return sb.ToString();
+        }
+        #endregion
     }
 }

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Customer.cs" />
     <Compile Include="DBFacade.cs" />
+    <Compile Include="E02Handler.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Order.cs" />

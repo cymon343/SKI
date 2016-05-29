@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Business;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
 
 namespace DomainLayer
@@ -251,50 +251,7 @@ namespace DomainLayer
         #region Methods
         public static Order CreateOrder(string e02)
         {
-
-            //e02 string is link to file, not actual file data. ^^
-            string text = File.ReadAllText(e02, System.Text.Encoding.UTF8);
-            StringReader sr = new StringReader(text);
-
-            
-            //CUSTOMER STUFF!
-            //Name and address: 213;Nordborg Andelsboligforening;;Mads Clausensvej 45;6430;Nordborg;;;;;;Att. Jørn;;;;;;;;;Nordborg Andelsboligforening;;;;DK;Danmark;;Att. Jørn;;;
-            //Delivery Address: 305;Ingen beboer;;Nordborgvej 25;6430;Nordborg;;;;;;Att. Jørn;;;;;;;;AB;Ingen beboer;;;;DK;Danmark;;Att. Jørn;;;
-
-            string line = sr.ReadLine();
-            string custName = "";
-            string custAddress = "";
-            string deliveryAddress = "";
-
-            while(line != null)
-            {
-                //TODO: Disect line here.
-                if (line.Contains("213;"))
-                {
-                    string[] lineParts = line.Split(';');
-                    custName = lineParts[1];
-                    custAddress = lineParts[3] + " - " + lineParts[4] + " " + lineParts[5];
-                }
-                else if(line.Contains("305"))
-                {
-                    string[] lineParts = line.Split(';');
-                    deliveryAddress = lineParts[3] + " - " + lineParts[4] + " " + lineParts[5];
-                    break;
-                }
-                line = sr.ReadLine();
-            }
-            string custID = DateTime.Now.ToString() + custName.Substring(0, 3);
-            CustomerData customer = new CustomerData(custID, custName, custAddress, deliveryAddress, "", "", "", "", "");
-            Console.WriteLine(customer.ToString());
-
-            //PRODUCTION DATA
-
-
-
-            //Console.WriteLine(text);
-            //TODO: Make magical code that creates awesome Order.
-            //NB: Make sure that arraySize of _progressInfo is 4.
-            return null;
+            return E02Handler.CreateOrder(e02);
         }
 
         public static Order CreateOrder(string _id, CustomerData _customer, int _orderNumber, int _orderSubject, int _orderAlternative, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)

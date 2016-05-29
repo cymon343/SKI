@@ -66,5 +66,16 @@ namespace DomainLayer
             OrderID = orderID;
         }
         #endregion
+
+        #region Methods
+        public override string ToString()
+        {
+            string result = "PRODUCTION DATA FOR " + _orderID + ":\n";
+
+            foreach (string s in Data)
+                result += s + "\n";
+            return result;
+        }
+        #endregion
     }
 }
