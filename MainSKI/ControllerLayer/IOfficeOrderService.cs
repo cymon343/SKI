@@ -20,8 +20,5 @@ namespace ControllerLayer
 
         [OperationContract]
         string TestService(string test, string testy);
-
-        [OperationContract]
-        List<Order> GetOrders();
     }     
 }

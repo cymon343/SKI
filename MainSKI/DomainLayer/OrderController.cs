@@ -41,9 +41,9 @@ namespace DomainLayer
 
         #region Methods
 
-        public bool AddOrder(string e02)
+        public bool AddOrder(string e02FileLocation)
         {
-            Order order = Order.CreateOrder(e02);
+            Order order = Order.CreateOrder(e02FileLocation);
             if (order != null)
             {
                 if (DBFacade.Instance.CreateOrder(order))

@@ -14,7 +14,7 @@ namespace TestApplication
         {
             //CreateOrderTest();
             //RetrieveordersTest();
-            CreateOrderTeste02();
+            //CreateOrderTeste02();
 
             Console.WriteLine("Press anything to continue");
             Console.ReadKey();
@@ -37,7 +37,11 @@ namespace TestApplication
 
         private static void CreateOrderTeste02()
         {
-            string e02Path = @"N:\Google Drive\Project SKI Kitchen\01 Assignment\Material From SKI\";
+            string e02Path = "";
+            //MKJ Path:
+            //e02Path = @"N:\Google Drive\Project SKI Kitchen\01 Assignment\Material From SKI\";
+            //SBL Path:
+            e02Path = @"C:\Users\Simon\Google Drev\Project SKI Kitchen\01 Assignment\Material From SKI\";
             string e02FileName = "w0000520.e02";
             string e02FileName2 = "w0000524.e02";
             string e02FileName3 = "w0000293 Ascii file with all info.e02";

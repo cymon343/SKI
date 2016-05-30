@@ -59,7 +59,9 @@ namespace ControllerLayer
         {
             DateTime fromDate = DateTime.Now;
             fromDate = fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
+            fromDate = fromDate.AddYears(-5); //TODO: DELETE THIS LINE !! (TEST)
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
+
         }
         
         [WebInvoke(Method = "GET", 

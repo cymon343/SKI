@@ -16,11 +16,10 @@ namespace ControllerLayer
             ResponseFormat = WebMessageFormat.Json, 
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "addOrder/{path}")]
-        public bool AddOrder(string path)
-        {
-            //TODO: Do path lookup stuff here.
-            string e02 = "";
-            return OrderController.Instance.AddOrder(e02);
+        public bool AddOrder(string e02FileLocation)
+        {        
+            e02FileLocation = e02FileLocation.Replace("_", "\\"); //TODO FIX THIS !!!
+            return OrderController.Instance.AddOrder(e02FileLocation);
         }
 
         [WebInvoke(Method = "GET", 
@@ -42,17 +41,6 @@ namespace ControllerLayer
         {
             Console.WriteLine("Test Text: " + test + " " + testy);
             return "Test Text: " + test + " " + testy;
-        }
-
-        [WebInvoke(Method = "GET", 
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "getOrders")]
-        public List<Order> GetOrders()
-        {
-            DateTime fromDate = DateTime.Now;
-            fromDate = fromDate.AddMonths(-2);
-            return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
         }
     }
 }

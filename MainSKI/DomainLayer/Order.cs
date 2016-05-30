@@ -249,9 +249,9 @@ namespace DomainLayer
         #endregion
 
         #region Methods
-        public static Order CreateOrder(string e02)
+        public static Order CreateOrder(string e02FileLocation)
         {
-            return E02Handler.CreateOrder(e02);
+            return E02Handler.CreateOrder(e02FileLocation);
         }
 
         public static Order CreateOrder(string _id, CustomerData _customer, int _orderNumber, int _orderSubject, int _orderAlternative, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)

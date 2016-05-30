@@ -133,18 +133,18 @@ namespace Business
             List<string> tmpData = new List<string>();
             List<ProductionData> resultData = new List<ProductionData>();
             tmpData.Add(productData[0]);
-            
-            for(int i = 1; i < productData.Count; i++)
+            int i;
+            for(i = 1; i < productData.Count; i++)
             {
-                if (productData[i].Substring(0, 5) == "Køkken")
+                if (productData[i].Substring(0, 6) == "Køkken") //NOTE TO REPORT !! The first ProdData MUST be "Køkken"!
                 {
-                    resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString(), orderID, tmpData));
+                    resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString() + "_" + i, orderID, tmpData));
                     tmpData = new List<string>();
                 }
                 else
                     tmpData.Add(productData[i]);
             }
-            resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString(), orderID, tmpData));
+            resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString() + "_" + i, orderID, tmpData));
             return resultData;
         }
 
@@ -156,7 +156,7 @@ namespace Business
             StringReader sr = new StringReader(e02Content);
 
             string line = sr.ReadLine();
-
+            int count = 1;
             while (line != null)
             {
                 if(line.Substring(0, KEY_LENGTH) == "430;")
@@ -183,8 +183,7 @@ namespace Business
                     if(line.Substring(0, KEY_LENGTH) == "501;")
                     {
                         lineParts = line.Split(';');
-
-                        hinge = "";
+                        
                         if(lineParts[1] == "1")
                             hinge = "V";
                         else if (lineParts[1] == "2")
@@ -216,14 +215,15 @@ namespace Business
                         else if (lineParts[2] == "10")
                         {
                             fin = "T";
-                            text += "\nFinering: " + "Top";
+                            text += "\nFinering: " + "Top"; //The data provided does not support "Bottom" Finish
                         }
                     }
-                    string id = "ELE_" + orderID + "_" + DateTime.Now.ToString();
+                    string id = "ELE_" + orderID + "_" + DateTime.Now.ToString() + count;
                     ProgressState[] eps = CreateProgressStateArray(id);
                     elements.Add(new Element(id, orderID, pos, text, hinge, fin, amount, unit, heading, eps));
                 }
                 line = sr.ReadLine();
+                count++;
             }
 
             return elements;

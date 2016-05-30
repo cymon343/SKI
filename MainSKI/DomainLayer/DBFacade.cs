@@ -85,13 +85,13 @@ namespace Persistence
 
                             custCommand.Parameters.Add("@customerID", SqlDbType.VarChar).Value = o.Customer.Id;
                             custCommand.Parameters.Add("@name", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@address", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@deliveryAddress", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@email", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@phonePrivate", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@phoneWork", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@phoneCell", SqlDbType.VarChar).Value = o.Customer.Name;
-                            custCommand.Parameters.Add("@fax", SqlDbType.VarChar).Value = o.Customer.Name;
+                            custCommand.Parameters.Add("@address", SqlDbType.VarChar).Value = o.Customer.Address;
+                            custCommand.Parameters.Add("@deliveryAddress", SqlDbType.VarChar).Value = o.Customer.DeliveryAddress;
+                            custCommand.Parameters.Add("@email", SqlDbType.VarChar).Value = o.Customer.Email;
+                            custCommand.Parameters.Add("@phonePrivate", SqlDbType.VarChar).Value = o.Customer.PhonePrivate;
+                            custCommand.Parameters.Add("@phoneWork", SqlDbType.VarChar).Value = o.Customer.PhoneWork;
+                            custCommand.Parameters.Add("@phoneCell", SqlDbType.VarChar).Value = o.Customer.PhoneCell;
+                            custCommand.Parameters.Add("@fax", SqlDbType.VarChar).Value = o.Customer.Fax;
 
                             if (custCommand.ExecuteNonQuery() < 1)
                                 throw new UnhappyException("Failed to create Customer in DB");
@@ -248,7 +248,7 @@ namespace Persistence
             catch (Exception e)
             {                
                 if (e is UnhappyException)
-                    Console.Write("[Unhappy Event]: Failed to create some table in DB");
+                    Console.Write("[Unhappy Event]: {0}", e.Message);
 
                 try
                 {
@@ -256,7 +256,7 @@ namespace Persistence
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Rollback failed. We're all doomed. {0}", ex.StackTrace.ToString());
+                    Console.WriteLine("Rollback failed. {0}", ex.StackTrace.ToString());
                 }
                 
                 success = false;
@@ -471,7 +471,7 @@ namespace Persistence
                         string customerID = row["CustomerID"].ToString();
                         string mainOrderID = row["MainOrderID"].ToString();
                         int orderNumber = (int)row["OrderNumber"];
-                        int orderSubject = (int)row["OrderAlternative"];
+                        int orderSubject = (int)row["OrderSubject"];
                         int orderAlternative = (int)row["OrderAlternative"];
                         DateTime deliveryDate;
                         DateTime.TryParse(row["DeliveryDate"].ToString(), out deliveryDate);
