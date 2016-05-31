@@ -141,28 +141,9 @@ namespace Persistence
                                 if (linkCommand.ExecuteNonQuery() < 1)
                                     throw new UnhappyException("Failed to create Link in DB");
                             }
-                        }
+                        }                   
 
-                        //#4 OPS
-                        for (int i = 0; i < o.ProgressInfo.Length; i++)
-                        {
-                            using (SqlCommand OPSCommand = new SqlCommand("createOPS", conn) { CommandType = CommandType.StoredProcedure })
-                            {
-                                OPSCommand.Transaction = transAction;
-
-                                OPSCommand.Parameters.Add("@OPSID", SqlDbType.VarChar).Value = o.ProgressInfo[i].ID;
-                                OPSCommand.Parameters.Add("@orderID", SqlDbType.VarChar).Value = o.ID;
-                                OPSCommand.Parameters.Add("@comment", SqlDbType.VarChar).Value = o.ProgressInfo[i].Comment;
-                                OPSCommand.Parameters.Add("@begun", SqlDbType.Bit).Value = o.ProgressInfo[i].Begun;
-                                OPSCommand.Parameters.Add("@done", SqlDbType.Bit).Value = o.ProgressInfo[i].Done;
-                                OPSCommand.Parameters.Add("@stationNumber", SqlDbType.Int).Value = o.ProgressInfo[i].StationNumber;
-
-                                if (OPSCommand.ExecuteNonQuery() < 1)
-                                    throw new UnhappyException("Failed to create OPS in DB");
-                            }
-                        }
-
-                        //#5 ProductionData
+                        //#4 ProductionData
                         for (int i = 0; i < o.ProdData.Count; i++)
                         {
                             using (SqlCommand ProdDataCommand = new SqlCommand("createProdData", conn) { CommandType = CommandType.StoredProcedure })
@@ -176,7 +157,7 @@ namespace Persistence
                                     throw new UnhappyException("Failed to create Production Data in DB");
                             }
 
-                            //#5.1 Data
+                            //#4.1 Data
                             for (int j = 0; j < o.ProdData[i].Data.Count; j++)
                             {
                                 using (SqlCommand DataCommand = new SqlCommand("createData", conn) { CommandType = CommandType.StoredProcedure })
@@ -269,20 +250,6 @@ namespace Persistence
 
         public List<Order> RetrieveAllOrders()
         {
-            /*
-            ORDER OF BUSINESS:
-            EXTRACT EACH TABLE SEPERATLY.
-            LOOP TO COMBINE IN THE ORDER DESCRIBED BELOW.
-
-            "ORDER DESCRIBED BELOW":
-            1) ElementProgressState
-            2) Element
-            3) OrderProgressState
-            4) Links
-            5) ProductionData
-            6) Customer
-            7) Order
-            */
             List<Order> orders = new List<Order>();
             
             try
@@ -369,29 +336,9 @@ namespace Persistence
                         }
                         elements.Add(new Element(id, orderID, position, text, hinge, fin, amount, unit, heading, tmpEps.ToArray()));
                     }
-                    Console.WriteLine("Done.");
+                    Console.WriteLine("Done.");                  
 
-                    // 4) Retrieving OrderProgressState
-                    Console.WriteLine("Retrieving Order ProgressStates from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getOrderProgressStates", connection);
-
-                    table = new DataTable();
-                    table.Load(cmd.ExecuteReader());
-
-                    List<ProgressState> ops = new List<ProgressState>();
-                    foreach (DataRow row in table.Rows)
-                    {
-                        string OPSID = row["OPSID"].ToString();
-                        string orderID = row["OrderID"].ToString();
-                        string comment = row["Comment"].ToString();
-                        bool begun = (bool)row["Begun"];
-                        bool done = (bool)row["Done"];
-                        int stationNumber = (int)row["StationNumber"];
-                        ops.Add(new ProgressState(OPSID, orderID, comment, begun, done, stationNumber));
-                    }
-                    Console.WriteLine("Done.");
-
-                    // 5) Retrieving Links
+                    // 4) Retrieving Links
                     Console.WriteLine("Retrieving Links from DB...");
                     cmd = new SqlCommand("SELECT * FROM getLinks", connection);
 
@@ -409,7 +356,7 @@ namespace Persistence
                     }
                     Console.WriteLine("Done.");
 
-                    // 6) Retrieving Data for Prod. Data.
+                    // 5) Retrieving Data for Prod. Data.
                     Console.WriteLine("Retrieving Data for Prod. Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getData", connection);
 
@@ -429,7 +376,7 @@ namespace Persistence
                     }
                     Console.WriteLine("Done.");
 
-                    // 7) Retrieving Production Data
+                    // 6) Retrieving Production Data
                     Console.WriteLine("Retrieving Production Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getProductionData", connection);
 
@@ -458,7 +405,7 @@ namespace Persistence
                     }
                     Console.WriteLine("Done.");
 
-                    // 8) Retrieving Orders
+                    // 7) Retrieving Orders
                     Console.WriteLine("Retrieving Orders from DB...");
                     cmd = new SqlCommand("SELECT * FROM getOrders", connection);
 
@@ -481,7 +428,7 @@ namespace Persistence
                         double numberOfElements = (double)row["NumberOfElements"];
                         
 
-                        //8.1 Get Customer
+                        //7.1 Get Customer
                         CustomerData tmpCust = null;
                         for (int i = 0; i < customers.Count; i++)
                         {
@@ -493,7 +440,7 @@ namespace Persistence
                             }
                         }
 
-                        //8.2 Get Elements
+                        //7.2 Get Elements
                         List<Element> tmpElements = new List<Element>();
                         for (int i = 0; i < elements.Count; i++)
                         {
@@ -503,19 +450,8 @@ namespace Persistence
                                 elements.RemoveAt(i);
                                 i--;
                             }
-                        }
-                        //8.3 Get OPS'
-                        List<ProgressState> tmpOPS = new List<ProgressState>();
-                        for (int i = 0; i < ops.Count; i++)
-                        {
-                            if (id == ops[i].ParentID)
-                            {
-                                tmpOPS.Add(ops[i]);
-                                ops.RemoveAt(i);
-                                i--;
-                            }
-                        }
-                        //8.4 Get Links
+                        }                     
+                        //7.3 Get Links
                         List<Link> tmpLinks = new List<Link>();
                         for (int i = 0; i < links.Count; i++)
                         {
@@ -526,7 +462,7 @@ namespace Persistence
                                 i--;
                             }
                         }
-                        //8.5 Get Prod. Data
+                        //7.4 Get Prod. Data
                         List<ProductionData> tmpProductionData = new List<ProductionData>();
                         for (int i = 0; i < prodData.Count; i++)
                         {
@@ -537,15 +473,15 @@ namespace Persistence
                                 i--;
                             }
                         }
-                        //8.6 Create Order.
+                        //7.5 Create Order.
                         orders.Add(Order.CreateOrder(id, tmpCust, orderNumber, orderSubject, orderAlternative, deliveryDate, productionDate, cubicMeters,
-                                    numberOfElements, tmpLinks, mainOrderID, new List<Order>(), tmpElements, tmpOPS.ToArray(), tmpProductionData));
+                                    numberOfElements, tmpLinks, mainOrderID, new List<Order>(), tmpElements, tmpProductionData));
                     }
                     Console.WriteLine("Done.");
                     connection.Close();
                     Console.WriteLine(UserName + " disconnected from DB...");
 
-                    //8.7 Add suborders to orders.
+                    //7.6 Add suborders to orders.
                     for (int i = 0; i < orders.Count; i++)
                     {
                         for (int j = 0; j < orders.Count; j++)
@@ -555,8 +491,8 @@ namespace Persistence
                         }
                     }
 
-                    //8.8 Check all main lists are empty. (Ensure we got it all)
-                    int count = eps.Count + ops.Count + elements.Count + links.Count + dataList.Count + prodData.Count + customers.Count;
+                    //7.7 Check all main lists are empty. (Ensure we got it all)
+                    int count = eps.Count + elements.Count + links.Count + dataList.Count + prodData.Count + customers.Count;
                     if(count != 0)
                     {
                         throw new UnhappyException("Failed to use all data from DB.");
@@ -576,115 +512,7 @@ namespace Persistence
 
             }
             return orders;
-        }
-
-        public bool UpdateOrderProgressStateBegun(string orderID, int stationNumber, bool begun)
-        {
-            bool success = false;
-            try
-            {
-                Console.WriteLine(UserName + " trying to access DB...");
-
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
-                {
-                    connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
-                    using (SqlCommand command = new SqlCommand("updateOrderProgressStateBegun", connection) { CommandType = CommandType.StoredProcedure })
-                    {
-                        command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = orderID;
-                        command.Parameters.Add("@stationNumber", SqlDbType.Int).Value = stationNumber;
-                        command.Parameters.Add("@begun", SqlDbType.Bit).Value = begun;
-
-                        success = (command.ExecuteNonQuery() > 0);
-
-                        if (success)
-                            Console.WriteLine("OrderProgressStateBegun has been set in DB...");
-                        else
-                            Console.WriteLine("Failed to set OrderProgressStateBegun in DB...");
-
-                        connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-            return success;
-        }
-
-        public bool UpdateOrderProgressStateDone(string orderID, int stationNumber, bool done)
-        {
-            bool success = false;
-            try
-            {
-                Console.WriteLine(UserName + " trying to access DB...");
-
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
-                {
-                    connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
-                    using (SqlCommand command = new SqlCommand("updateOrderProgressStateDone", connection) { CommandType = CommandType.StoredProcedure })
-                    {
-                        command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = orderID;
-                        command.Parameters.Add("@stationNumber", SqlDbType.Int).Value = stationNumber;
-                        command.Parameters.Add("@done", SqlDbType.Bit).Value = done;
-
-                        success = (command.ExecuteNonQuery() > 0);
-
-                        if (success)
-                            Console.WriteLine("OrderProgressStateDone has been set in DB...");
-                        else
-                            Console.WriteLine("Failed to set OrderProgressStateDone in DB...");
-
-                        connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-            return success;
-        }
-
-        public bool UpdateOrderProgressStateComment(string orderID, int stationNumber, string comment)
-        {
-            bool success = false;
-            try
-            {
-                Console.WriteLine(UserName + " trying to access DB...");
-
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
-                {
-                    connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
-                    using (SqlCommand command = new SqlCommand("updateOrderProgressStateComment", connection) { CommandType = CommandType.StoredProcedure })
-                    {
-                        command.Parameters.Add("@orderID", SqlDbType.VarChar).Value = orderID;
-                        command.Parameters.Add("@stationNumber", SqlDbType.Int).Value = stationNumber;
-                        command.Parameters.Add("@comment", SqlDbType.VarChar).Value = comment;
-
-                        success = (command.ExecuteNonQuery() > 0);
-
-                        if (success)
-                            Console.WriteLine("OrderProgressStateComment has been set in DB...");
-                        else
-                            Console.WriteLine("Failed to set OrderProgressStateComment in DB...");
-
-                        connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-            return success;
-        }
+        } 
 
         public bool UpdateElementProgressStateBegun(string elementID, int stationNumber, bool begun)
         {

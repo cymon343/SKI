@@ -194,44 +194,7 @@ namespace DomainLayer
                     }
                 }
             }
-        }
-
-        public void FlipOrderBegun(int station, string orderID)
-        {
-            Order order = FindOrderByID(orderID);
-            if (order != null)
-            {
-                if (DBFacade.Instance.UpdateOrderProgressStateBegun(orderID, station, !order.ProgressInfo[station].Begun))
-                {
-                    order.ProgressInfo[station].Begun = !order.ProgressInfo[station].Begun;
-                }
-            }
-
-        }
-
-        public void FlipOrderDone(int station, string orderID)
-        {
-            Order order = FindOrderByID(orderID);
-            if (order != null)
-            {
-                if (DBFacade.Instance.UpdateOrderProgressStateDone(orderID, station, !order.ProgressInfo[station].Done))
-                {
-                    order.ProgressInfo[station].Done = !order.ProgressInfo[station].Done;
-                }
-            }
-        }
-
-        public void SetOrderComment(int station, string orderID, string comment)
-        {
-            Order order = FindOrderByID(orderID);
-            if (order != null)
-            {
-                if (DBFacade.Instance.UpdateOrderProgressStateComment(orderID, station, comment))
-                {
-                    order.ProgressInfo[station].Comment = comment;
-                }
-            }
-        }
+        }       
 
         public List<Order> GetOrdersByDeliveryDate(DateTime fromDate)
         {

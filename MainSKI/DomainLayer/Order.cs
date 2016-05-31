@@ -21,8 +21,7 @@ namespace DomainLayer
         private List<Link> _appendixLinks;
         private string _mainOrderID;
         private List<Order> _subOrders;
-        private List<Element> _elements;
-        private ProgressState[] _progressInfo;
+        private List<Element> _elements;        
         private List<ProductionData> _prodData;
 
 
@@ -145,20 +144,7 @@ namespace DomainLayer
             {
                 _elements = value;
             }
-        }
-        [DataMember]
-        public ProgressState[] ProgressInfo
-        {
-            get
-            {
-                return _progressInfo;
-            }
-
-            set
-            {
-                _progressInfo = value;
-            }
-        }
+        }       
         [DataMember]
         public List<ProductionData> ProdData
         {
@@ -228,7 +214,7 @@ namespace DomainLayer
         #endregion
 
         #region Constructors     
-        private Order(string _id, CustomerData _customer, int _orderNumber, int _orderSubject, int _orderAlternative, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
+        private Order(string _id, CustomerData _customer, int _orderNumber, int _orderSubject, int _orderAlternative, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, List<ProductionData> _prodData)
         {
             this._id = _id;
             this._customer = _customer;
@@ -242,8 +228,7 @@ namespace DomainLayer
             this._appendixLinks = _appendixLinks;
             this._mainOrderID = _mainOrderID;
             this._subOrders = _subOrders;
-            this._elements = _elements;
-            this._progressInfo = _progressInfo;
+            this._elements = _elements;           
             this._prodData = _prodData;
         }
         #endregion
@@ -254,9 +239,9 @@ namespace DomainLayer
             return E02Handler.CreateOrder(e02FileLocation);
         }
 
-        public static Order CreateOrder(string _id, CustomerData _customer, int _orderNumber, int _orderSubject, int _orderAlternative, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, ProgressState[] _progressInfo, List<ProductionData> _prodData)
+        public static Order CreateOrder(string _id, CustomerData _customer, int _orderNumber, int _orderSubject, int _orderAlternative, DateTime _deliveryDate, DateTime _productionDate, double _cubicMeters, double _numOfElements, List<Link> _appendixLinks, string _mainOrderID, List<Order> _subOrders, List<Element> _elements, List<ProductionData> _prodData)
         {
-            return new Order(_id, _customer, _orderNumber, _orderSubject, _orderAlternative, _deliveryDate, _productionDate, _cubicMeters, _numOfElements, _appendixLinks, _mainOrderID, _subOrders, _elements, _progressInfo, _prodData);
+            return new Order(_id, _customer, _orderNumber, _orderSubject, _orderAlternative, _deliveryDate, _productionDate, _cubicMeters, _numOfElements, _appendixLinks, _mainOrderID, _subOrders, _elements, _prodData);
         }
 
         #endregion

@@ -31,25 +31,7 @@ namespace ControllerLayer
         public void FlipElementDone(string orderID, string elementID, string stationNumber)
         {
             OrderController.Instance.FlipElementDone(int.Parse(stationNumber), orderID, elementID);
-        }
-
-        [WebInvoke(Method = "GET", 
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "flipOrderBegun/{orderID}/{stationNumber}")]
-        public void FlipOrderBegun(string orderID, string stationNumber)
-        {
-            OrderController.Instance.FlipOrderBegun(int.Parse(stationNumber), orderID);
-        }
-
-        [WebInvoke(Method = "GET", 
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "flipOrderDone/{orderID}/{stationNumber}")]
-        public void FlipOrderDone(string orderID, string stationNumber)
-        {
-            OrderController.Instance.FlipOrderDone(int.Parse(stationNumber), orderID);
-        }
+        }    
 
         [WebInvoke(Method = "GET", 
             ResponseFormat = WebMessageFormat.Json,
@@ -61,7 +43,6 @@ namespace ControllerLayer
             fromDate = fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
             fromDate = fromDate.AddYears(-5); //TODO: DELETE THIS LINE !! (TEST)
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
-
         }
         
         [WebInvoke(Method = "GET", 
@@ -71,15 +52,6 @@ namespace ControllerLayer
         public void SetElementComment(string orderID, string elementID, string stationNumber, string comment)
         {
             OrderController.Instance.SetElementComment(int.Parse(stationNumber), orderID, elementID, comment);
-        }
-
-        [WebInvoke(Method = "GET", 
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "setOrderComment/{orderID}/{stationNumber}/{comment}")]
-        public void SetOrderComment(string orderID, string stationNumber, string comment)
-        {
-            OrderController.Instance.SetOrderComment(int.Parse(stationNumber), orderID, comment);
         }
 
         [WebInvoke(Method = "GET", 

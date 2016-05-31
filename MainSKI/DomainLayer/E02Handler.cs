@@ -32,7 +32,7 @@ namespace Business
 
             // 3) - Extract Element Data
             List<Element> elements = ExtractElements(e02Content, orderID);
-            foreach(Element e in elements)
+            foreach (Element e in elements)
                 Console.WriteLine(e);
 
             // 4) - Extract & Prepare data for Order Object.
@@ -43,8 +43,8 @@ namespace Business
 
             //TODO: Look into date stuff- Need more data to determine which date is what.
             List<DateTime> dates = ExtractDateData(e02Content);
-            
-            return Order.CreateOrder(orderID, customer, orderNumber, orderSubject, orderAlternative, dates[0], dates[1], 0, 0, new List<Link>(), "", new List<Order>(), elements, CreateProgressStateArray(orderID), prodData);
+
+            return Order.CreateOrder(orderID, customer, orderNumber, orderSubject, orderAlternative, dates[0], dates[1], 0, 0, new List<Link>(), "", new List<Order>(), elements, prodData);
         }
 
         private static string GetOrderID(string e02Content)
@@ -54,9 +54,9 @@ namespace Business
             string line = sr.ReadLine();
             string orderID = "";
 
-            while(line != null)
+            while (line != null)
             {
-                if(line.Substring(0, KEY_LENGTH) == "300;")
+                if (line.Substring(0, KEY_LENGTH) == "300;")
                 {
                     string[] lineParts = line.Split(';');
                     orderID = lineParts[1];
@@ -85,7 +85,7 @@ namespace Business
                     name = lineParts[1];
                     address = lineParts[3] + " - " + lineParts[4] + " " + lineParts[5];
                 }
-                else if (line.Substring(0, KEY_LENGTH) == "305")
+                else if (line.Substring(0, KEY_LENGTH) == "305;")
                 {
                     string[] lineParts = line.Split(';');
                     deliveryAddress = lineParts[3] + " - " + lineParts[4] + " " + lineParts[5];
@@ -107,12 +107,12 @@ namespace Business
 
             string line = sr.ReadLine();
 
-            while(line != null)
+            while (line != null)
             {
-                if(line.Substring(0, KEY_LENGTH) == "423;")
+                if (line.Substring(0, KEY_LENGTH) == "423;")
                 {
                     string[] lineParts = line.Split(';');
-                    if(lineParts[4] == "1")
+                    if (lineParts[4] == "1")
                     {
                         //Notice no check is made for 424;, in the outer scope, as it will always be
                         //preceded by 423;, thus ending up inside "this" scope.
@@ -127,22 +127,21 @@ namespace Business
                     productData.Add(lines[2] + ": " + lines[4]);
                 }
 
-                    line = sr.ReadLine();
+                line = sr.ReadLine();
             }
 
             List<string> tmpData = new List<string>();
             List<ProductionData> resultData = new List<ProductionData>();
             tmpData.Add(productData[0]);
             int i;
-            for(i = 1; i < productData.Count; i++)
+            for (i = 1; i < productData.Count; i++)
             {
                 if (productData[i].Substring(0, 6) == "Køkken") //NOTE TO REPORT !! The first ProdData MUST be "Køkken"!
                 {
                     resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString() + "_" + i, orderID, tmpData));
                     tmpData = new List<string>();
                 }
-                else
-                    tmpData.Add(productData[i]);
+                tmpData.Add(productData[i]);
             }
             resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString() + "_" + i, orderID, tmpData));
             return resultData;
@@ -159,15 +158,17 @@ namespace Business
             int count = 1;
             while (line != null)
             {
-                if(line.Substring(0, KEY_LENGTH) == "430;")
+                if (line.Substring(0, KEY_LENGTH) == "430;")
                 {
                     string[] lineparts = line.Split(';');
                     headings.Add(lineparts[1], lineparts[2]);
                 }
-                else if(line.Substring(0, KEY_LENGTH) == "500;")
+                else if (line.Substring(0, KEY_LENGTH) == "500;")
                 {
                     string[] lineParts = line.Split(';');
                     string pos = lineParts[1];
+                    if (lineParts[2] != "0")
+                        pos += "." + lineParts[2];
                     string text = lineParts[3] + "\n" + lineParts[8];
                     double amount = double.Parse(lineParts[9].Replace('.', ','));
                     string unit = lineParts[10];
@@ -180,11 +181,11 @@ namespace Business
                     string fin = "";
 
                     line = sr.ReadLine();
-                    if(line.Substring(0, KEY_LENGTH) == "501;")
+                    if (line.Substring(0, KEY_LENGTH) == "501;")
                     {
                         lineParts = line.Split(';');
-                        
-                        if(lineParts[1] == "1")
+
+                        if (lineParts[1] == "1")
                             hinge = "V";
                         else if (lineParts[1] == "2")
                             hinge = "H";
@@ -237,7 +238,7 @@ namespace Business
             string line = sr.ReadLine();
             while (line != null)
             {
-                if(line.Substring(0, KEY_LENGTH) == "300;")
+                if (line.Substring(0, KEY_LENGTH) == "300;")
                 {
                     string[] lineParts = line.Split(';');
 

@@ -16,15 +16,6 @@ namespace ControllerLayer
         List<Order> GetOrders();
 
         [OperationContract]
-        void FlipOrderBegun(string orderID, string stationNumber);
-
-        [OperationContract]
-        void FlipOrderDone(string orderID, string stationNumber);
-
-        [OperationContract]
-        void SetOrderComment(string orderID, string stationNumber, string comment);
-
-        [OperationContract]
         void FlipElementBegun(string orderID, string elementID, string stationNumber);
 
         [OperationContract]

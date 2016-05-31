@@ -88,19 +88,9 @@ namespace TestApplication
             ProductionData pd = new ProductionData("prodID1", "PD1", testData);
             Prods.Add(pd);
 
-
-            ProgressState[] OPSArray = new ProgressState[4];
-            ProgressState OPS = null;
-            for (int i = 0; i < 4; i++)
-            {
-                OPS = new ProgressState("OPSID1", OrderID + (i + 1), "comment", false, false, i + 4);
-                OPSArray[i] = OPS;
-            }
-
-
             Order o = Order.CreateOrder(OrderID,
                 new CustomerData("CustIDTEST", "CustNameTEST", "CustAddressTEST", "CustDeliveryAddressTEST", "CustMailTEST", "CustPhoneTEST", "MorePhoneTEST", "moremorePhoneTEST", "faxTEST"),
-                OrderNum, OrderSubject, OrderAlt, DateTime.Now, DateTime.Now, 0.0, 1, ll, "TEST", new List<Order>(), el, EPSArray, Prods);
+                OrderNum, OrderSubject, OrderAlt, DateTime.Now, DateTime.Now, 0.0, 1, ll, "TEST", new List<Order>(), el, Prods);
 
             Console.WriteLine("TEST: Order created in memory...");
 
