@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+
+<html ng-app="SKI">
+<head>
+    <title>Sønderborg Køkken Industri - Ordrebekræftelses håndterings-side</title>
+	<meta charset="utf-8" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+</head>
+<body ng-controller="skiController">
+
+      
+
+    <!--Views goes here:-->
+    <div ng-view ng-model="orders"></div>
+
+
+    <!--BootScripts:-->    
+    <script src="framework/jquery-2.1.4.min.js"></script>  
+    <script src="framework/bootstrap.min.js"></script>
+    <script src="framework/angular.min.js"></script>
+    <script src="framework/angular-route.min.js"></script>
+    
+
+    <!--Modules:-->
+    <script src="scripts/SKIModule.js"></script>
+</body>
+</html>

@@ -15,7 +15,7 @@ namespace ControllerLayer
         private const int FROM_DATE_MONTH_OFFSET = -2; //TODO: Save this in properties file.
         #endregion
 
-        [WebInvoke(Method = "GET", 
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "flipElementBegun/{orderID}/{elementID}/{stationNumber}")]
@@ -24,16 +24,16 @@ namespace ControllerLayer
             OrderController.Instance.FlipElementBegun(int.Parse(stationNumber), orderID, elementID);
         }
 
-        [WebInvoke(Method = "GET", 
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "flipElementDone/{orderID}/{elementID}/{stationNumber}")]
         public void FlipElementDone(string orderID, string elementID, string stationNumber)
         {
             OrderController.Instance.FlipElementDone(int.Parse(stationNumber), orderID, elementID);
-        }    
+        }
 
-        [WebInvoke(Method = "GET", 
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "getOrders")]
@@ -44,8 +44,8 @@ namespace ControllerLayer
             fromDate = fromDate.AddYears(-5); //TODO: DELETE THIS LINE !! (TEST)
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
         }
-        
-        [WebInvoke(Method = "GET", 
+
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "setElementComment/{orderID}/{elementID}/{stationNumber}/{comment}")]
@@ -54,7 +54,7 @@ namespace ControllerLayer
             OrderController.Instance.SetElementComment(int.Parse(stationNumber), orderID, elementID, comment);
         }
 
-        [WebInvoke(Method = "GET", 
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "serviceTest/{test}")]

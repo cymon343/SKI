@@ -12,17 +12,17 @@ namespace ControllerLayer
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service1" in both code and config file together.
     public class OfficeOrderService : IOfficeOrderService
     {
-        [WebInvoke(Method = "GET", 
-            ResponseFormat = WebMessageFormat.Json, 
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "addOrder/{path}")]
         public bool AddOrder(string e02FileLocation)
-        {        
+        {
             e02FileLocation = e02FileLocation.Replace("_", "\\"); //TODO FIX THIS !!!
             return OrderController.Instance.AddOrder(e02FileLocation);
         }
 
-        [WebInvoke(Method = "GET", 
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "addSubOrderToOrder/{path}/{orderID}")]
@@ -33,7 +33,7 @@ namespace ControllerLayer
             return OrderController.Instance.AddSubOrderToOrder(e02, orderID);
         }
 
-        [WebInvoke(Method = "GET", 
+        [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "testService/{test}/{testy}")]

@@ -20,5 +20,5 @@ namespace ControllerLayer
 
         [OperationContract]
         string TestService(string test, string testy);
-    }     
+    }
 }

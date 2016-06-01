@@ -50,10 +50,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ControllerLayer\ControllerLayer.csproj">
-      <Project>{55a205d8-948f-4168-bca7-adc8c10e35e1}</Project>
-      <Name>ControllerLayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DomainLayer\DomainLayer.csproj">
       <Project>{f06ee9b5-8cc5-4035-b5ff-9e131726d011}</Project>
       <Name>DomainLayer</Name>
