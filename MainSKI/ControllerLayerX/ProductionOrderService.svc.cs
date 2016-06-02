@@ -42,6 +42,8 @@ namespace ControllerLayer
             DateTime fromDate = DateTime.Now;
             fromDate = fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
             fromDate = fromDate.AddYears(-5); //TODO: DELETE THIS LINE !! (TEST)
+            Console.WriteLine("[SERVER] : ORDERS RETRIEVED");//TODO: DELETE THIS LINE !! (TEST)
+            //Console.ReadKey();
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
         }
 

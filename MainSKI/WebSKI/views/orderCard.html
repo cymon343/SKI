@@ -1,5 +1,59 @@
-<h1>--Order Card--</h1>
+<h1>Ordrebekræftelse: </h1>
+<h4> OrdreNummer: {{orderFactory.getCurrentOrder().ID}}</h4>
+<p>
+    <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(o.ID)"> Se Tillæg </a> 
+</p>
+<p>
+    <a ng-href="#/orderList" ng-click="displayAppendixLinkList(o.ID)"> Se OrdreOversigt </a> <!--TODO: FIX ng-click LOGIC !!!!-->
+</p>
+<ul>    
+    <li ng-repeat="prodData in orderFactory.getCurrentOrder().ProdData">
+        <b>Sønderborg Køkkenet</b>
+        <ul>
+            <li ng-repeat="data in prodData.Data">{{data}}</li>
+        </ul>
+    </li>
+</ul>
 
-<!-- current order should be available {{currentOrder}} -->
+<table border="1">
+    <tr>
+        <th>Pos</th>
+        <th>Kode/Tekst</th>
+        <th>Hængsl.</th>
+        <th>Fin.</th>
+        <th>Antal</th>
+        <th>Enhed</th>
+        <th colspan="3"><center>4</center></th>
+        <th colspan="3"><center>5</center></th>
+        <th colspan="3"><center>6</center></th>
+        <th colspan="3"><center>7</center></th>        
+    </tr>
+    <tr>
+        <th colspan="6"></th>              
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>kommentar</th>
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>kommentar</th>
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>kommentar</th>
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>kommentar</th>    
+    </tr>
+    <tr>{{}}</tr>
 
-<h1>{{currentOrder}}</h1>
+    <tr ng-repeat="headingID in orderFactory.getCurrentOrder().ElementHeadings"></tr> <!--Skrives sammen med det nedenunder-->
+
+    <tr ng-repeat="element in orderFactory.getCurrentOrder().Elements"> <!--Do this right-->
+        <td><center> {{element.Position}} </center></td>
+        <td> {{element.Text}} </td>
+        <td><center> {{element.Hinge}}</center></td>
+        <td><center> {{element.Fin}}</center></td>
+        <td><center> {{element.Amount}}</center></td>
+        <td><center> {{element.Unit}}</center></td>
+
+    </tr>
+</table>

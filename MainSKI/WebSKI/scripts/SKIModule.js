@@ -22,6 +22,7 @@ angular.module('SKI', ['ngRoute'])
 function OrderFactory() 
 {
     var orders = [];
+    var currentOrder = {};
 
     return{
         getOrders: function()
@@ -30,11 +31,36 @@ function OrderFactory()
         },
         setOrders: function(newObject)
         {
-            orders=newObject;
+            orders = newObject;
+
+            console.log("[orders SET]:");
+            console.log(newObject);
         },
-        getOrderByID(ID)
-        {
-            
+        getCurrentOrder: function () {
+            return currentOrder;
+        },
+        setCurrentOrder: function (newObject) {
+            currentOrder = newObject;
+
+            console.log("[currentOrder SET]:");
+            console.log(newObject);
+        },
+        getOrderbyID: function (ID) {
+            for (var i = 0; i < orders.length; i++) {
+                if (orders[i].ID == ID) {
+                    return orders[i];
+                }
+            }
+            return null;
+        },
+        getElementsByHeading(heading) {
+            var tmpElements = [];
+            for (var i = 0; i < currentOrder.Elements; i++) {
+                if (currentOrder.Elements[i].Heading == heading) {
+                    tmpElements.push(currentOrder.Elements[i]);
+                }
+            }
+            return tmpElements;
         }
     };
 }
@@ -43,7 +69,7 @@ function OrderFactory()
 function WebApi($http, apiUrl)
 {    
     this.getAllOrders = function() 
-    {
+    {        
         var req = 
        {
            method: 'GET',
@@ -51,53 +77,60 @@ function WebApi($http, apiUrl)
            param:'',
            data: ''
        }
-        return $http(req);
+        return $http(req);      
     }    
 }
 
 
 //SKIController:
 function SKICtrl($scope, orderFactory, webApi)
-{
-    $scope.orderFactory = orderFactory;
+{  
+    $scope.getOrdersFromService = function () {
+        webApi.getAllOrders()
+           .then(function successCallback(response) {               
+               var jsonObject = response.data.GetOrdersResult;
 
-    orderFactory.setOrders(webApi.getAllOrders());    
+               console.log("[OBJECT RETRIEVED FROM SERVICE]:");
+               console.log(jsonObject);               
+               orderFactory.setOrders(jsonObject);               
+           }, function errorCallback(response) {
+               console.log(response);   //TODO: Handle failure response
+           });
+    }
 
-    $scope.isOrderBegun = function isOrderBegun(id, stationNum)
+
+    $scope.getOrdersFromService();
+    $scope.orderFactory = orderFactory; //Is it OK to bind the factory to the scope?
+
+    $scope.isOrderBegun = function isOrderBegun(id, stationIndex)
     {
+        //console.log("printing ID from [BEGUN] method:" + id + " -stationNum: " + stationNum);
         success = false;       
-        for (var i = 0; i < $scope.orders.length; i++)
-        {
-            if ($scope.orders[i].ID = id)
-            {
-                for (var j = 0; j < $scope.orders[i].Elements.length; j++)
-                {
-                    success = success || $scope.orders[i].Elements[j].ProgressInfo[stationNum].Begun;
-                    if (success == true) {
-                        return success;
-                    }
+        var theOrder = orderFactory.getOrderbyID(id);
+
+        if (theOrder != null) {
+            for (var i = 0; i < theOrder.Elements.length; i++) {
+                success = success || theOrder.Elements[i].ProgressInfo[stationIndex].Begun;
+                if (success == true) {
+                    return success;
                 }
-                break;
-            }            
-        }
+            }
+        }       
         return success;
     }
 
-    $scope.isOrderDone = function isOrderBegun(id, stationNum) {
+    $scope.isOrderDone = function isOrderDone(id, stationIndex)
+    {
+        //console.log("printing ID from [DONE] method:" + id + " -stationNum: " + stationNum);
         success = true;
+        var theOrder = orderFactory.getOrderbyID(id);
 
-        for (var i = 0; i < $scope.orders.length; i++) {
-            if ($scope.orders[i].ID = id)
-            {
-                for (var j = 0; j < $scope.orders[i].Elements.length; j++)
-                {
-                    success = success && $scope.orders[i].Elements[j].ProgressInfo[stationNum].Done;
-                    if (success == false)
-                    {
-                        return success;
-                    }
+        if (theOrder != null) {
+            for (var i = 0; i < theOrder.Elements.length; i++) {
+                success = success && theOrder.Elements[i].ProgressInfo[stationIndex].Done;
+                if (success != true) {
+                    return success;
                 }
-                break;
             }
         }
         return success;
@@ -105,25 +138,48 @@ function SKICtrl($scope, orderFactory, webApi)
 
     $scope.displayOrderCard = function displayOrderCard(orderID)
     {
-        $scope.currentOrder = getOrderbyID(orderID); 
+        orderFactory.setCurrentOrder(orderFactory.getOrderbyID(orderID));
     }
 
     $scope.displayAppendixLinkList = function displayAppendixLinkList(orderID)
     {        
-        $scope.currentOrder = getOrderbyID(orderID);        
+        orderFactory.setCurrentOrder(orderFactory.getOrderbyID(orderID));
     }
-
-    function getOrderbyID(orderID)
-    {
-        for (var i = 0; i < $scope.orders.length; i++)
-        {
-            if ($scope.orders[i].ID == orderID)
-            {
-                return $scope.orders[i];
-            }
-        }
-    }
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //OrderCtrl:

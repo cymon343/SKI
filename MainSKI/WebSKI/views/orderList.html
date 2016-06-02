@@ -1,45 +1,62 @@
-<h1>Liste over Ordrer:</h1>
+<h1>Liste over Ordrer: ÆØÅæøå</h1>
 
-<table>
-    <!--TODO ADD HEADEARS TO TABLE HERE-->
-    <tr ng-repeat="o in orders | orderBy: 'o.DeliveryDate'">
+<table border="1">    
+    <tr>
+        <th></th>
+        <th colspan="2"><center>4</center></th>
+        <th colspan="2"><center>5</center></th>
+        <th colspan="2"><center>6</center></th>
+        <th colspan="2"><center>7</center></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>ORDRE:</th>
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>begyndt</th>
+        <th>færdig</th>
+        <th>begyndt</th>
+        <th>færdig</th>        
+        <th></th>
+        <th></th>
+    </tr>
+
+    <tr ng-repeat="o in orderFactory.getOrders() | orderBy: 'o.DeliveryDate'">
+
         <td>{{ o.ID }}<br/>{{ o.Customer.Name }}<br/>{{o.DeliveryDate}} </td>        
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderBegun(o.ID, 0)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderDone(o.ID, 0)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderBegun(o.ID, 1)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderDone(o.ID, 1)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderBegun(o.ID, 2)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderDone(o.ID, 2)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderBegun(o.ID, 3)" />
         </td>
-        <td>
+        <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderDone(o.ID, 3)" />
         </td>
         <td>          
-             <a ng-href="#/orderCard" ng-click="displayOrderCard(o.ID)">Se Ordre</a>
+             <a ng-href="#/orderCard" ng-click="displayOrderCard(o.ID)"> Se Ordre </a>
         </td>
         <td>
-            <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(o.ID)">Se Tillæg</a>
+            <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(o.ID)"> Se Tillæg </a>
         </td>
-
-
-
-
-
-
 </tr>
 </table>
 
