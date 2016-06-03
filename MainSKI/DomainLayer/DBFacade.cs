@@ -56,7 +56,7 @@ namespace Persistence
                 _userConnectionString = "SimonLaptop";
             else if (UserName.ToUpper() == "TM_MA")
                 _userConnectionString = "MortenLaptop";
-            else if (UserName.ToUpper() == "BRUGER")
+            else if (UserName.ToUpper() == "MORTEN")
                 _userConnectionString = "MortenDesktop";
         }
         #endregion

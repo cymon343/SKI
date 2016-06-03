@@ -55,11 +55,14 @@ function OrderFactory()
         },
         getElementsByHeading(heading) {
             var tmpElements = [];
-            for (var i = 0; i < currentOrder.Elements; i++) {
+
+            for (var i = 0; i < currentOrder.Elements.length; i++) {
                 if (currentOrder.Elements[i].Heading == heading) {
                     tmpElements.push(currentOrder.Elements[i]);
                 }
             }
+            console.log("Returned Elements from getElementsByHeading.");
+            console.log(tmpElements);
             return tmpElements;
         }
     };
@@ -85,6 +88,7 @@ function WebApi($http, apiUrl)
 //SKIController:
 function SKICtrl($scope, orderFactory, webApi)
 {  
+    $scope.currentStation = -1; //Maybe not necessary to initialize here?
     $scope.getOrdersFromService = function () {
         webApi.getAllOrders()
            .then(function successCallback(response) {               
@@ -145,6 +149,23 @@ function SKICtrl($scope, orderFactory, webApi)
     {        
         orderFactory.setCurrentOrder(orderFactory.getOrderbyID(orderID));
     }
+
+    function setView(view) {
+        $scope.view = view;
+    }
+
+    function startEdit(stationNumber)
+    {
+        console.log("Started editing station ");
+        console.log(stationNumber);
+        $scope.currentStation = stationNumber;
+        setView('edit');
+    }
+
+    function cancelEdit()
+    {
+        setView('list');
+    }
     
 }
 
@@ -201,9 +222,9 @@ function OrderCtrl($scope) {
   var selected = -1;
   setView('list');
 
-  function setView(view) {
+  /*function setView(view) {
     $scope.view = view;
-  }
+  }*/
 
   function startAdd() {
     $scope.MovieTitle = '';
@@ -221,7 +242,7 @@ function OrderCtrl($scope) {
     setView('list');
   }
 
-  function startEdit(index) {    
+  /*function startEdit(index) {    
     selected = index;
     
     $scope.MovieTitle = $scope.movies[index].title;   
@@ -229,7 +250,7 @@ function OrderCtrl($scope) {
     $scope.MovieDuration = $scope.movies[index].time;     
       
     setView('edit');   
-  }
+  }*/
 
   function save() {
       

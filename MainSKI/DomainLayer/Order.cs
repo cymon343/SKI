@@ -210,6 +210,25 @@ namespace DomainLayer
                 _orderAlternative = value;
             }
         }
+        [DataMember]
+        public List<string> Headings
+        {
+            get
+            {
+                List<string> headings = new List<string>();
+                foreach (Element e in Elements)
+                {
+                    if (!headings.Contains(e.Heading))
+                    {
+                        if (e.Heading == "Elementer")
+                            headings.Insert(0, e.Heading);
+                        else
+                            headings.Add(e.Heading);
+                    }
+                }
+                return headings;
+            }
+        }
 
         #endregion
 
