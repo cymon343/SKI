@@ -1,9 +1,9 @@
 angular.module('SKI', ['ngRoute'])
-.constant('apiUrl', 'http://localhost:36172/ProductionOrderService.svc/getOrders')
+.constant('apiUrl', 'http://localhost:36172/ProductionOrderService.svc/')
 .factory('orderFactory', OrderFactory)
 .service('webApi',WebApi)
 .controller('skiController', SKICtrl)
-.controller('orderController', OrderCtrl)  
+//.controller('orderController', OrderCtrl)  
 
 //Config for URL routing (ngRoute).
 .config(function ($routeProvider) {
@@ -33,8 +33,8 @@ function OrderFactory()
         {
             orders = newObject;
 
-            console.log("[orders SET]:");
-            console.log(newObject);
+            //console.log("[orders SET]:");
+            //console.log(newObject);
         },
         getCurrentOrder: function () {
             return currentOrder;
@@ -42,8 +42,8 @@ function OrderFactory()
         setCurrentOrder: function (newObject) {
             currentOrder = newObject;
 
-            console.log("[currentOrder SET]:");
-            console.log(newObject);
+            //console.log("[currentOrder SET]:");
+            //console.log(newObject);
         },
         getOrderbyID: function (ID) {
             for (var i = 0; i < orders.length; i++) {
@@ -61,8 +61,8 @@ function OrderFactory()
                     tmpElements.push(currentOrder.Elements[i]);
                 }
             }
-            console.log("Returned Elements from getElementsByHeading.");
-            console.log(tmpElements);
+            //console.log("Returned Elements from getElementsByHeading.");
+            //console.log(tmpElements);
             return tmpElements;
         }
     };
@@ -76,19 +76,33 @@ function WebApi($http, apiUrl)
         var req = 
        {
            method: 'GET',
-           url: apiUrl,
+           url: apiUrl + "getOrders",
            param:'',
            data: ''
        }
         return $http(req);      
-    }    
+    }
+    this.setElementComment = function(orderID, elementID, stationNumber, comment)
+    {
+        //var data = {orderID: "test", elementID: "test", stationNumber: "test", comment: "test"}
+        var data = { orderID: orderID, elementID: elementID, stationNumber: stationNumber, comment: comment }
+        //var data = [orderID, elementID, stationNumber, comment];
+        //TODO: Work from here. Current state - Receives error 400 (Bad Request)
+        $http({
+            url: apiUrl + "setElementComment",
+            method: "POST",
+            params: data,
+        })
+
+    }
 }
 
 
 //SKIController:
 function SKICtrl($scope, orderFactory, webApi)
 {  
-    $scope.currentStation = -1; //Maybe not necessary to initialize here?
+    $scope.view = 'list';
+    $scope.currentProgressObject = {}; //Saving CurrentProgressState rather than just the "comment" part of it for two reasons: 1. We can also access the bools, but secondly, and more important - ng-model does not work with primitives!
     $scope.getOrdersFromService = function () {
         webApi.getAllOrders()
            .then(function successCallback(response) {               
@@ -150,21 +164,31 @@ function SKICtrl($scope, orderFactory, webApi)
         orderFactory.setCurrentOrder(orderFactory.getOrderbyID(orderID));
     }
 
-    function setView(view) {
+    function setView(view) 
+    {
         $scope.view = view;
     }
 
-    function startEdit(stationNumber)
+    $scope.startEdit = function startEdit(progressInfo)
     {
-        console.log("Started editing station ");
-        console.log(stationNumber);
-        $scope.currentStation = stationNumber;
+        $scope.currentProgressObject = progressInfo;
+        console.log("Reading Comment:");
+        console.log($scope.currentProgressObject.Comment);
         setView('edit');
     }
 
-    function cancelEdit()
+    $scope.cancelEdit = function cancelEdit()
     {
         setView('list');
+    }
+
+    $scope.saveComment = function saveComment()
+    {
+        setView('list');
+        console.log("Comment saved:");
+        console.log($scope.currentProgressObject.Comment);
+        webApi.setElementComment(orderFactory.getCurrentOrder().orderID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber, $scope.currentProgressObject.Comment);
+        //TODO: Send to service.
     }
     
 }
@@ -204,7 +228,7 @@ function SKICtrl($scope, orderFactory, webApi)
 
 
 //OrderCtrl:
-function OrderCtrl($scope) {
+/*function OrderCtrl($scope) {
   $scope.movies = movies;
   $scope.startAdd = startAdd;
   $scope.cancel = cancel;
@@ -222,9 +246,9 @@ function OrderCtrl($scope) {
   var selected = -1;
   setView('list');
 
-  /*function setView(view) {
+  function setView(view) {
     $scope.view = view;
-  }*/
+  }
 
   function startAdd() {
     $scope.MovieTitle = '';
@@ -242,7 +266,7 @@ function OrderCtrl($scope) {
     setView('list');
   }
 
-  /*function startEdit(index) {    
+  function startEdit(index) {    
     selected = index;
     
     $scope.MovieTitle = $scope.movies[index].title;   
@@ -250,7 +274,7 @@ function OrderCtrl($scope) {
     $scope.MovieDuration = $scope.movies[index].time;     
       
     setView('edit');   
-  }*/
+  }
 
   function save() {
       
@@ -274,4 +298,4 @@ function OrderCtrl($scope) {
   function getSelected() {
     return movies[selected].title;
   }
-}
+}*/

@@ -47,10 +47,10 @@ namespace ControllerLayer
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
         }
 
-        [WebInvoke(Method = "GET",
+        [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "setElementComment/{orderID}/{elementID}/{stationNumber}/{comment}")]
+            UriTemplate = "setElementComment")]
         public void SetElementComment(string orderID, string elementID, string stationNumber, string comment)
         {
             OrderController.Instance.SetElementComment(int.Parse(stationNumber), orderID, elementID, comment);

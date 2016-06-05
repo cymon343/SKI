@@ -15,7 +15,7 @@
     </li>
 </ul>
 
-<table border="1" ng-show="view=='list''">
+<table border="1" ng-show="view=='list'">
     <tr>
         <th colspan="6"></th>              
         <th colspan="3"><center>4</center></th>
@@ -59,16 +59,16 @@
 
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[0].Begun" /></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[0].Done" /></td>
-            <td><button ng-click="startEdit(0)">Note</button></td>
+            <td><button ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[1].Begun" /></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[1].Done" /></td>
-            <td><button ng-click="startEdit(1)">Note</button></td>
+            <td><button ng-click="startEdit(element.ProgressInfo[1])">Note</button></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[2].Begun" /></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[2].Done" /></td>
-            <td><button ng-click="startEdit(2)">Note</button></td>
+            <td><button ng-click="startEdit(element.ProgressInfo[2])">Note</button></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[3].Begun" /></td>
             <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[3].Done" /></td>
-            <td><button ng-click="startEdit(3)">Note</button></td>
+            <td><button ng-click="startEdit(element.ProgressInfo[3])">Note</button></td>
         </tr>
     </tbody>
 </table>
@@ -77,12 +77,12 @@
     <h3>Skriv Note:</h3>
     <div class="row">
         <div class="col-sm-6"> <!-- TODO: Read note data into input box.-->
-            <input class="form-control input-lg" type="text" placeholder="Skriv Note Her" ng-model="note" />
+            <textarea ng-model="currentProgressObject.Comment" class="form-control input-lg" placeholder="Skriv Note Her" rows="4" cols="10"/>
         </div>
     </div>
     <div class="row" style="margin-top: 12px;">
         <div class="col-sm-6">
-            <button class="btn btn-success btn" ng-disabled="note==''" ng-click="save()">Gem</button>
+            <button class="btn btn-success btn" ng-disabled="currentProgressObject.Comment==''" ng-click="saveComment()">Gem</button>
             <button class="btn btn-warning btn" ng-click="cancelEdit()">Anuller</button>
         </div>
     </div>
