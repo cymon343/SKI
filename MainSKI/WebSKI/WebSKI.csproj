@@ -94,6 +94,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\style.css" />
     <Content Include="framework\jquery-2.1.4.min.js" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">

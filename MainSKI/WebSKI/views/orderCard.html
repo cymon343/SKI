@@ -1,21 +1,21 @@
-<h1>Ordrebekræftelse: </h1>
+ï»¿<h1>OrdrebekrÃ¦ftelse</h1>
 <h4> OrdreNummer: {{orderFactory.getCurrentOrder().ID}}</h4>
 <p>
-    <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(orderFactory.getCurrentOrder().ID)"> Se Tillæg </a> 
+    <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(orderFactory.getCurrentOrder().ID)">Se TillÃ¦g</a> 
 </p>
 <p>
-    <a ng-href="#/orderList" ng-click="refreshPage()"> Se OrdreOversigt </a>
+    <a ng-href="#/orderList" ng-click="refreshPage()">Se Ordreoversigt</a>
 </p>
 <ul>    
     <li ng-repeat="prodData in orderFactory.getCurrentOrder().ProdData">
-        <b>Sønderborg Køkkenet</b>
+        <b>SÃ¸nderborg KÃ¸kkenet</b>
         <ul>
             <li ng-repeat="data in prodData.Data">{{data}}</li>
         </ul>
     </li>
 </ul>
 
-<table border="1" ng-show="view=='list'">
+<table border="1" ng-show="view=='list'" class="table-striped">
     <tr>
         <th colspan="6"></th>              
         <th colspan="3"><center>4</center></th>
@@ -24,26 +24,26 @@
         <th colspan="3"><center>7</center></th>        
     </tr>
     <tr>
-        <th>Pos</th>
-        <th>Kode/Tekst</th>
-        <th>Hængsl.</th>
-        <th>Fin.</th>
-        <th>Antal</th>
-        <th>Enhed</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>kommentar</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>kommentar</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>kommentar</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>kommentar</th>    
+        <th width="60"><center>Pos</center></th>
+        <th width="320"><center>Kode/Tekst</center></th>
+        <th width="60"><center>HÃ¦ngsl.</center></th>
+        <th width="60"><center>Fin.</center></th>
+        <th width="60"><center>Antal</center></th>
+        <th width="60"><center>Enhed</center></th>
+        <th width="60"><center>Begyndt</center></th>
+        <th width="60"><center>FÃ¦rdig</center></th>
+        <th width="60"><center>Note</center></th>
+        <th width="60"><center>Begyndt</center></th>
+        <th width="60"><center>FÃ¦rdig</center></th>
+        <th width="60"><center>Note</center></th>
+        <th width="60"><center>Begyndt</center></th>
+        <th width="60"><center>FÃ¦rdig</center></th>
+        <th width="60"><center>Note</center></th>
+        <th width="60"><center>Begyndt</center></th>
+        <th width="60"><center>FÃ¦rdig</center></th>
+        <th width="60"><center>Note</center></th>    
     </tr>
-    <tbody ng-repeat="heading in orderFactory.getCurrentOrder().Headings">
+    <tbody class="tbody-inverse" ng-repeat="heading in orderFactory.getCurrentOrder().Headings">
         <!--Skrives sammen med det nedenunder-->
         <tr>
             <th colspan="18">{{heading}}</></th>
@@ -59,16 +59,16 @@
 
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Done" /></td>
-            <td><button ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>
+            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[1])" ng-checked="element.ProgressInfo[1].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[1])" ng-checked="element.ProgressInfo[1].Done" /></td>
-            <td><button ng-click="startEdit(element.ProgressInfo[1])">Note</button></td>
+            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[1])">Note</button></td>
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[2])" ng-checked="element.ProgressInfo[2].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[2])" ng-checked="element.ProgressInfo[2].Done" /></td>
-            <td><button ng-click="startEdit(element.ProgressInfo[2])">Note</button></td>
+            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[2])">Note</button></td>
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[3])" ng-checked="element.ProgressInfo[3].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[3])" ng-checked="element.ProgressInfo[3].Done" /></td>
-            <td><button ng-click="startEdit(element.ProgressInfo[3])">Note</button></td>
+            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[3])">Note</button></td>
         </tr>
     </tbody>
 </table>

@@ -1,8 +1,8 @@
-<h1>Liste over Ordrer: ÆØÅæøå</h1>
+ï»¿<h1>Ordreoversigt</h1>
 
-<table border="1">    
+<table border="1" class="table-striped">    
     <tr>
-        <th></th>
+        <th width="240"></th>
         <th colspan="2"><center>4</center></th>
         <th colspan="2"><center>5</center></th>
         <th colspan="2"><center>6</center></th>
@@ -11,22 +11,22 @@
         <th></th>
     </tr>
     <tr>
-        <th>ORDRE:</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>begyndt</th>
-        <th>færdig</th>
-        <th>begyndt</th>
-        <th>færdig</th>        
-        <th></th>
-        <th></th>
+        <th width="240"><center>Ordre</center></th>
+        <th width="80"><center>Begyndt</center></th>
+        <th width="80"><center>FÃ¦rdig</center></th>
+        <th width="80"><center>Begyndt</center></th>
+        <th width="80"><center>FÃ¦rdig</center></th>
+        <th width="80"><center>Begyndt</center></th>
+        <th width="80"><center>FÃ¦rdig</center></th>
+        <th width="80"><center>Begyndt</center></th>
+        <th width="80"><center>FÃ¦rdig</center></th>        
+        <th width="80"></th>
+        <th width="80"></th>
     </tr>
 
     <tr ng-repeat="o in orderFactory.getOrders() | orderBy: 'o.DeliveryDate'">
 
-        <td>{{ o.ID }}<br/>{{ o.Customer.Name }}<br/>{{o.DeliveryDate}} </td>        
+        <td>{{ o.ID }}<br/>{{ o.Customer.Name }}<br/><p ng-bind="formatDate(o.DeliveryDate) | date:'MM/dd/yyyy'"></p></td>        
         <td align="center">
             <input type="checkbox" disabled="disabled" ng-checked="isOrderBegun(o.ID, 0)" />
         </td>
@@ -52,10 +52,10 @@
             <input type="checkbox" disabled="disabled" ng-checked="isOrderDone(o.ID, 3)" />
         </td>
         <td>          
-             <a ng-href="#/orderCard" ng-click="displayOrderCard(o.ID)"> Se Ordre </a>
+             <center><a ng-href="#/orderCard" ng-click="displayOrderCard(o.ID)"> Se Ordre </a></center>
         </td>
         <td>
-            <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(o.ID)"> Se Tillæg </a>
+            <center><a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(o.ID)"> Se TillÃ¦g </a></center>
         </td>
 </tr>
 </table>

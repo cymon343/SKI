@@ -232,13 +232,14 @@ function SKICtrl($scope, orderFactory, webApi)
 
     $scope.startEdit = function startEdit(progressInfo)
     {
-        $scope.currentProgressObject = progressInfo;      
+        $scope.currentProgressObject = progressInfo;
+        $scope.currentNote = progressInfo.Comment;
         setView('edit');
     }
 
     $scope.cancelEdit = function cancelEdit()
     {
-        //TODO: Value stays, changes must be reverted.
+        $scope.currentProgressObject.Comment = $scope.currentNote;
         setView('list'); 
     }
 
@@ -263,5 +264,13 @@ function SKICtrl($scope, orderFactory, webApi)
         $scope.currentProgressObject = progressInfo;
         webApi.flipDone(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)
      
+    }
+
+    $scope.formatDate = function(date)
+    {
+        //Using date.substr(6) to remove the first 6 letters from the date (Formatted like this: /Date(1425855600000+0100)/ )
+        //Afterwards using parseInt manages to turn the remaining value into an integer, which is then supplied to the Date object.
+        var outDate = new Date(parseInt(date.substr(6)));
+        return outDate;
     }
 }
