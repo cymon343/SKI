@@ -156,9 +156,9 @@ namespace DomainLayer
                 Element element = FindElementOnOrderByID(order, elementID);
                 if (element != null)
                 {
-                    if (DBFacade.Instance.UpdateElementProgressStateBegun(elementID, station, !element.ProgressInfo[station].Begun))
+                    if (DBFacade.Instance.UpdateElementProgressStateBegun(elementID, station, !element.ProgressInfo[station-4].Begun))
                     {
-                        element.ProgressInfo[station].Begun = !element.ProgressInfo[station].Begun;
+                        element.ProgressInfo[station-4].Begun = !element.ProgressInfo[station-4].Begun;
                     }
                 }
             }
@@ -172,9 +172,9 @@ namespace DomainLayer
                 Element element = FindElementOnOrderByID(order, elementID);
                 if (element != null)
                 {
-                    if (DBFacade.Instance.UpdateElementProgressStateDone(elementID, station, !element.ProgressInfo[station].Done))
+                    if (DBFacade.Instance.UpdateElementProgressStateDone(elementID, station, !element.ProgressInfo[station-4].Done))
                     {
-                        element.ProgressInfo[station].Done = !element.ProgressInfo[station].Done;
+                        element.ProgressInfo[station-4].Done = !element.ProgressInfo[station-4].Done;
                     }
                 }
             }
@@ -182,6 +182,7 @@ namespace DomainLayer
 
         public void SetElementComment(int station, string orderID, string elementID, string comment)
         {
+            //station = station - 4;
             Order order = FindOrderByID(orderID);
             if (order != null)
             {
@@ -190,7 +191,7 @@ namespace DomainLayer
                 {
                     if (DBFacade.Instance.UpdateElementProgressStateComment(elementID, station, comment))
                     {
-                        element.ProgressInfo[station].Comment = comment;
+                        element.ProgressInfo[station-4].Comment = comment;
                     }
                 }
             }

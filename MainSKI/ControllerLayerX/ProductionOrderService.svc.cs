@@ -15,22 +15,28 @@ namespace ControllerLayer
         private const int FROM_DATE_MONTH_OFFSET = -2; //TODO: Save this in properties file.
         #endregion
 
-        [WebInvoke(Method = "GET",
+        [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "flipElementBegun/{orderID}/{elementID}/{stationNumber}")]
-        public void FlipElementBegun(string orderID, string elementID, string stationNumber)
+            UriTemplate = "flipElementBegun")]
+        public void FlipElementBegun(ElementProgressFlipRequest data)
         {
-            OrderController.Instance.FlipElementBegun(int.Parse(stationNumber), orderID, elementID);
+            string orderID = data.OrderID;
+            string elementID = data.ElementID;
+            int stationNumber = data.StationNumber;
+            OrderController.Instance.FlipElementBegun(stationNumber, orderID, elementID);
         }
 
-        [WebInvoke(Method = "GET",
+        [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "flipElementDone/{orderID}/{elementID}/{stationNumber}")]
-        public void FlipElementDone(string orderID, string elementID, string stationNumber)
+            UriTemplate = "flipElementDone")]
+        public void FlipElementDone(ElementProgressFlipRequest data)
         {
-            OrderController.Instance.FlipElementDone(int.Parse(stationNumber), orderID, elementID);
+            string orderID = data.OrderID;
+            string elementID = data.ElementID;
+            int stationNumber = data.StationNumber;
+            OrderController.Instance.FlipElementDone(stationNumber, orderID, elementID);
         }
 
         [WebInvoke(Method = "GET",
@@ -41,28 +47,39 @@ namespace ControllerLayer
         {
             DateTime fromDate = DateTime.Now;
             fromDate = fromDate.AddMonths(FROM_DATE_MONTH_OFFSET);
-            fromDate = fromDate.AddYears(-5); //TODO: DELETE THIS LINE !! (TEST)
-            Console.WriteLine("[SERVER] : ORDERS RETRIEVED");//TODO: DELETE THIS LINE !! (TEST)
-            //Console.ReadKey();
+            fromDate = fromDate.AddYears(-5); //TODO: DELETE THIS LINE !! (TEST)            
             return OrderController.Instance.GetOrdersByDeliveryDate(fromDate);
-        }
+        }        
 
         [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "setElementComment")]
-        public void SetElementComment(string orderID, string elementID, string stationNumber, string comment)
-        {
-            OrderController.Instance.SetElementComment(int.Parse(stationNumber), orderID, elementID, comment);
+        ResponseFormat = WebMessageFormat.Json,
+        RequestFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Wrapped,
+        UriTemplate = "setElementComment")]
+        public void SetElementComment(ElementCommentRequest data)
+        {            
+            string orderID = data.OrderID;
+            string elementID = data.ElementID;
+            int stationNumber = data.StationNumber;
+            string comment = data.Comment;
+
+            OrderController.Instance.SetElementComment(stationNumber, orderID, elementID, comment);
         }
 
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "serviceTest/{test}")]
-        public string ServiceTest(string test)
+            UriTemplate = "serviceTest")]
+        public ElementCommentRequest ServiceTest()
         {
-            return "Test Text: " + test;
+            ElementCommentRequest ele = new ElementCommentRequest();
+            ele.ElementID = "ELEID1";
+            ele.Comment = "comment";
+            ele.OrderID = "OrderID1";
+            ele.StationNumber = 7;
+            return ele;
         }
+
+
     }
 }

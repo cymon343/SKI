@@ -1,5 +1,16 @@
-<h1>--ApendixLinkListpage--</h1>
+<h1>Tillæg til Ordrebekræftelse: </h1>
+<h4> OrdreNummer: {{orderFactory.getCurrentOrder().ID}}</h4>
 
-<!-- current order should be available {{currentOrder}} -->
+<p>
+    <a ng-href="#/orderList" ng-click="refreshPage()"> Se OrdreOversigt </a>
+</p>
+<td>
+    <a ng-href="#/orderCard" ng-click="displayOrderCard(orderFactory.getCurrentOrder().ID)"> Tilbage til Ordre </a>
+</td>
 
-<h1>{{currentOrder}}</h1>
+
+<ul ng-repeat="links in orderFactory.getCurrentOrder().AppendixLinks">    
+    <li>
+        <a href="{{links.TheLink}}" > {{links.TheLink}}</a>
+    </li>
+</ul>

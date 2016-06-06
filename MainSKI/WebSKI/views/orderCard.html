@@ -1,10 +1,10 @@
 <h1>Ordrebekræftelse: </h1>
 <h4> OrdreNummer: {{orderFactory.getCurrentOrder().ID}}</h4>
 <p>
-    <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(o.ID)"> Se Tillæg </a> 
+    <a ng-href="#/appendixLinks" ng-click="displayAppendixLinkList(orderFactory.getCurrentOrder().ID)"> Se Tillæg </a> 
 </p>
 <p>
-    <a ng-href="#/orderList" ng-click="displayAppendixLinkList(o.ID)"> Se OrdreOversigt </a> <!--TODO: FIX ng-click LOGIC !!!!-->
+    <a ng-href="#/orderList" ng-click="refreshPage()"> Se OrdreOversigt </a>
 </p>
 <ul>    
     <li ng-repeat="prodData in orderFactory.getCurrentOrder().ProdData">
@@ -46,10 +46,10 @@
     <tbody ng-repeat="heading in orderFactory.getCurrentOrder().Headings">
         <!--Skrives sammen med det nedenunder-->
         <tr>
-            <th colspan="18"><center>{{heading}}</center></th>
+            <th colspan="18">{{heading}}</></th>
         </tr>
     
-        <tr ng-repeat="element in orderFactory.getElementsByHeading(heading)"> <!--Do this right-->
+        <tr ng-repeat="element in orderFactory.getElementsByHeading(heading)"> 
             <td><center> {{element.Position}} </center></td>
             <td> {{element.Text}} </td>
             <td><center> {{element.Hinge}}</center></td>
@@ -57,17 +57,17 @@
             <td><center> {{element.Amount}}</center></td>
             <td><center> {{element.Unit}}</center></td>
 
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[0].Begun" /></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[0].Done" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Begun" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Done" /></td>
             <td><button ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[1].Begun" /></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[1].Done" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[1])" ng-checked="element.ProgressInfo[1].Begun" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[1])" ng-checked="element.ProgressInfo[1].Done" /></td>
             <td><button ng-click="startEdit(element.ProgressInfo[1])">Note</button></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[2].Begun" /></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[2].Done" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[2])" ng-checked="element.ProgressInfo[2].Begun" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[2])" ng-checked="element.ProgressInfo[2].Done" /></td>
             <td><button ng-click="startEdit(element.ProgressInfo[2])">Note</button></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[3].Begun" /></td>
-            <td align="center"><input type="checkbox" ng-checked="element.ProgressInfo[3].Done" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[3])" ng-checked="element.ProgressInfo[3].Begun" /></td>
+            <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[3])" ng-checked="element.ProgressInfo[3].Done" /></td>
             <td><button ng-click="startEdit(element.ProgressInfo[3])">Note</button></td>
         </tr>
     </tbody>
@@ -76,13 +76,13 @@
 <div ng-show="view=='edit'">
     <h3>Skriv Note:</h3>
     <div class="row">
-        <div class="col-sm-6"> <!-- TODO: Read note data into input box.-->
+        <div class="col-sm-6">
             <textarea ng-model="currentProgressObject.Comment" class="form-control input-lg" placeholder="Skriv Note Her" rows="4" cols="10"/>
         </div>
     </div>
     <div class="row" style="margin-top: 12px;">
         <div class="col-sm-6">
-            <button class="btn btn-success btn" ng-disabled="currentProgressObject.Comment==''" ng-click="saveComment()">Gem</button>
+            <button class="btn btn-success btn" ng-click="saveComment()">Gem</button>
             <button class="btn btn-warning btn" ng-click="cancelEdit()">Anuller</button>
         </div>
     </div>

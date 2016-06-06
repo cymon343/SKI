@@ -16,16 +16,16 @@ namespace ControllerLayer
         List<Order> GetOrders();
 
         [OperationContract]
-        void FlipElementBegun(string orderID, string elementID, string stationNumber);
+        void FlipElementBegun(ElementProgressFlipRequest data);
 
         [OperationContract]
-        void FlipElementDone(string orderID, string elementID, string stationNumber);
+        void FlipElementDone(ElementProgressFlipRequest data);
 
         [OperationContract]
-        void SetElementComment(string orderID, string elementID, string stationNumber, string comment);
+        void SetElementComment(ElementCommentRequest data);
 
         [OperationContract]
-        string ServiceTest(string test);
+        ElementCommentRequest ServiceTest();
 
     }
 }

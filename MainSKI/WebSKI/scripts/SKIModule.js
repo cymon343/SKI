@@ -82,18 +82,75 @@ function WebApi($http, apiUrl)
        }
         return $http(req);      
     }
+
     this.setElementComment = function(orderID, elementID, stationNumber, comment)
     {
-        //var data = {orderID: "test", elementID: "test", stationNumber: "test", comment: "test"}
-        var data = { orderID: orderID, elementID: elementID, stationNumber: stationNumber, comment: comment }
-        //var data = [orderID, elementID, stationNumber, comment];
-        //TODO: Work from here. Current state - Receives error 400 (Bad Request)
+        var data = {
+            "data": {
+                "Comment": comment,
+                "ElementID": elementID,
+                "OrderID": orderID,
+                "StationNumber": stationNumber
+            }
+        }      
         $http({
-            url: apiUrl + "setElementComment",
             method: "POST",
-            params: data,
+            url: apiUrl + "setElementComment",                      
+            data: data            
         })
+         .then(function successCallback(response) {
+             console.log("[ElementComment posted with success]:");
+             console.log(response);
+         }, function errorCallback(response) {
+             console.log("[ElementComment not posted]:");
+             console.log(response);   //TODO: Handle failure response
+         });
+    }
 
+    this.flipBegun = function(orderID, elementID, stationNumber)
+    {
+        var data = {
+            "data": {                
+                "ElementID": elementID,
+                "OrderID": orderID,
+                "StationNumber": stationNumber
+            }
+        }      
+        $http({
+            method: "POST",
+            url: apiUrl + "flipElementBegun",                      
+            data: data            
+        })
+         .then(function successCallback(response) {
+             console.log("[Begun bool flipped with success]:");
+             console.log(response);
+         }, function errorCallback(response) {
+             console.log("[Begun bool not flipped]:");
+             console.log(response);   //TODO: Handle failure response
+         });
+    }
+
+    this.flipDone = function(orderID, elementID, stationNumber)
+    {
+        var data = {
+            "data": {
+                "ElementID": elementID,
+                "OrderID": orderID,
+                "StationNumber": stationNumber
+            }
+        }
+        $http({
+            method: "POST",
+            url: apiUrl + "flipElementDone",
+            data: data
+        })
+           .then(function successCallback(response) {
+               console.log("[Done bool flipped with success]:");
+               console.log(response);
+           }, function errorCallback(response) {
+               console.log("[Done bool not flipped]:");
+               console.log(response);   //TODO: Handle failure response
+           });
     }
 }
 
@@ -116,8 +173,12 @@ function SKICtrl($scope, orderFactory, webApi)
            });
     }
 
+    $scope.refreshPage = function refreshPage() {
+        orderFactory.setCurrentOrder(null);
+        $scope.getOrdersFromService();
+    }
 
-    $scope.getOrdersFromService();
+    $scope.refreshPage();
     $scope.orderFactory = orderFactory; //Is it OK to bind the factory to the scope?
 
     $scope.isOrderBegun = function isOrderBegun(id, stationIndex)
@@ -171,15 +232,14 @@ function SKICtrl($scope, orderFactory, webApi)
 
     $scope.startEdit = function startEdit(progressInfo)
     {
-        $scope.currentProgressObject = progressInfo;
-        console.log("Reading Comment:");
-        console.log($scope.currentProgressObject.Comment);
+        $scope.currentProgressObject = progressInfo;      
         setView('edit');
     }
 
     $scope.cancelEdit = function cancelEdit()
     {
-        setView('list');
+        //TODO: Value stays, changes must be reverted.
+        setView('list'); 
     }
 
     $scope.saveComment = function saveComment()
@@ -187,115 +247,21 @@ function SKICtrl($scope, orderFactory, webApi)
         setView('list');
         console.log("Comment saved:");
         console.log($scope.currentProgressObject.Comment);
-        webApi.setElementComment(orderFactory.getCurrentOrder().orderID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber, $scope.currentProgressObject.Comment);
-        //TODO: Send to service.
+        webApi.setElementComment(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber, $scope.currentProgressObject.Comment)       
+           
     }
     
+    $scope.flipBegun = function flipBegun(progressInfo)
+    {
+        $scope.currentProgressObject = progressInfo;
+        webApi.flipBegun(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)
+       
+    }
+
+    $scope.flipDone = function flipDone(progressInfo)
+    {
+        $scope.currentProgressObject = progressInfo;
+        webApi.flipDone(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)
+     
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//OrderCtrl:
-/*function OrderCtrl($scope) {
-  $scope.movies = movies;
-  $scope.startAdd = startAdd;
-  $scope.cancel = cancel;
-  $scope.add = add;
-  $scope.startEdit = startEdit;
-  $scope.save = save;
-  $scope.startRemove = startRemove;
-  $scope.remove = remove;
-  $scope.getSelected = getSelected;
-  $scope.MovieTitle = '';
-  $scope.MovieActor = '';
-  $scope.MovieDuration = '';
-  
-
-  var selected = -1;
-  setView('list');
-
-  function setView(view) {
-    $scope.view = view;
-  }
-
-  function startAdd() {
-    $scope.MovieTitle = '';
-    $scope.MovieActor = '';
-    $scope.MovieDuration = '';
-    setView('add');
-  }
-
-  function cancel() {
-    setView('list');
-  }
-
-  function add() {      
-    $scope.movies.push({"title": $scope.MovieTitle, "actor": $scope.MovieActor, "time": $scope.MovieDuration}); 
-    setView('list');
-  }
-
-  function startEdit(index) {    
-    selected = index;
-    
-    $scope.MovieTitle = $scope.movies[index].title;   
-    $scope.MovieActor = $scope.movies[index].actor;  
-    $scope.MovieDuration = $scope.movies[index].time;     
-      
-    setView('edit');   
-  }
-
-  function save() {
-      
-    $scope.movies[selected].title = $scope.MovieTitle;
-    $scope.movies[selected].actor = $scope.MovieActor;
-    $scope.movies[selected].time = $scope.MovieDuration;
-    
-    setView('list');
-  }
-
-  function startRemove(index) {
-    selected = index;
-    setView('delete');
-  }
-
-  function remove() {
-    $scope.movies.splice(selected, 1);
-    setView('list');
-  }
-
-  function getSelected() {
-    return movies[selected].title;
-  }
-}*/
