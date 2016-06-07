@@ -59,16 +59,16 @@
 
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Done" /></td>
-            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>
+            <td align="center"><button class="{{buttonText(element.ProgressInfo[0].Comment)}}" ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[1])" ng-checked="element.ProgressInfo[1].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[1])" ng-checked="element.ProgressInfo[1].Done" /></td>
-            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[1])">Note</button></td>
+            <td align="center"><button class="{{buttonText(element.ProgressInfo[1].Comment)}}" ng-click="startEdit(element.ProgressInfo[1])">Note</button></td>
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[2])" ng-checked="element.ProgressInfo[2].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[2])" ng-checked="element.ProgressInfo[2].Done" /></td>
-            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[2])">Note</button></td>
+            <td align="center"><button class="{{buttonText(element.ProgressInfo[2].Comment)}}" ng-click="startEdit(element.ProgressInfo[2])">Note</button></td>
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[3])" ng-checked="element.ProgressInfo[3].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[3])" ng-checked="element.ProgressInfo[3].Done" /></td>
-            <td align="center"><button class="btn btn-info btn" ng-click="startEdit(element.ProgressInfo[3])">Note</button></td>
+            <td align="center"><button class="{{buttonText(element.ProgressInfo[3].Comment)}}" ng-click="startEdit(element.ProgressInfo[3])">Note</button></td>
         </tr>
     </tbody>
 </table>

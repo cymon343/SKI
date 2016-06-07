@@ -273,4 +273,14 @@ function SKICtrl($scope, orderFactory, webApi)
         var outDate = new Date(parseInt(date.substr(6)));
         return outDate;
     }
+
+    $scope.buttonText = function(comment)
+    {
+        if (comment == "") {
+            return "btn btn-info btn";
+        }
+        else {
+            return "btn btn-success btn";
+        }
+    }
 }
