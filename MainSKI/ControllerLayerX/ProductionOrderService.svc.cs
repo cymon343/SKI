@@ -65,21 +65,5 @@ namespace ControllerLayer
 
             OrderController.Instance.SetElementComment(stationNumber, orderID, elementID, comment);
         }
-
-        [WebInvoke(Method = "GET",
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "serviceTest")]
-        public ElementCommentRequest ServiceTest()
-        {
-            ElementCommentRequest ele = new ElementCommentRequest();
-            ele.ElementID = "ELEID1";
-            ele.Comment = "comment";
-            ele.OrderID = "OrderID1";
-            ele.StationNumber = 7;
-            return ele;
-        }
-
-
     }
 }

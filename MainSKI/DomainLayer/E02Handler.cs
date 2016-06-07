@@ -14,7 +14,6 @@ namespace Business
         private const int NUMBER_OF_STATIONS = 4; //TODO: Make this load dynamically externally.
         public static Order CreateOrder(string e02FileLocation)
         {
-            //TODO: Remove all WriteLines.
             //e02 string is link to file, not actual file data. ^^
             string e02Content = File.ReadAllText(e02FileLocation, System.Text.Encoding.Default);
 
@@ -36,12 +35,11 @@ namespace Business
                 Console.WriteLine(e);
 
             // 4) - Extract & Prepare data for Order Object.
-            string[] orderIDInfo = orderID.Split('/'); //Discuss if this is necesarry- We're saving redundant, and possibly useless data.
+            string[] orderIDInfo = orderID.Split('/');
             int orderNumber = int.Parse(orderIDInfo[0]);
             int orderSubject = int.Parse(orderIDInfo[1]);
             int orderAlternative = int.Parse(orderIDInfo[2]);
 
-            //TODO: Look into date stuff- Need more data to determine which date is what.
             List<DateTime> dates = ExtractDateData(e02Content);
 
             return Order.CreateOrder(orderID, customer, orderNumber, orderSubject, orderAlternative, dates[0], dates[1], 0, 0, new List<Link>(), "", new List<Order>(), elements, prodData);
@@ -78,7 +76,6 @@ namespace Business
             string line = sr.ReadLine();
             while (line != null)
             {
-                //TODO: Disect line here.
                 if (line.Substring(0, KEY_LENGTH) == "213;")
                 {
                     string[] lineParts = line.Split(';');
@@ -136,7 +133,7 @@ namespace Business
             int i;
             for (i = 1; i < productData.Count; i++)
             {
-                if (productData[i].Substring(0, 6) == "Køkken") //NOTE TO REPORT !! The first ProdData MUST be "Køkken"!
+                if (productData[i].Substring(0, 6) == "Køkken") 
                 {
                     resultData.Add(new ProductionData("PD_" + orderID + "_" + DateTime.Now.ToString() + "_" + i, orderID, tmpData));
                     tmpData = new List<string>();
@@ -197,7 +194,7 @@ namespace Business
                         }
                         else if (lineParts[2] == "1")
                         {
-                            if (lineParts[6] == "515") //This is probably a workaround, but pattern works so far.
+                            if (lineParts[6] == "515") 
                             {
                                 fin = "F";
                                 text += "\nFinering: " + "Forkant";

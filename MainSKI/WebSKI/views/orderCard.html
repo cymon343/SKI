@@ -43,12 +43,10 @@
         <th width="60"><center>Færdig</center></th>
         <th width="60"><center>Note</center></th>    
     </tr>
-    <tbody class="tbody-inverse" ng-repeat="heading in orderFactory.getCurrentOrder().Headings">
-        <!--Skrives sammen med det nedenunder-->
+    <tbody class="tbody-inverse" ng-repeat="heading in orderFactory.getCurrentOrder().Headings">      
         <tr>
             <th colspan="18">{{heading}}</></th>
-        </tr>
-    
+        </tr>    
         <tr ng-repeat="element in orderFactory.getElementsByHeading(heading)"> 
             <td><center> {{element.Position}} </center></td>
             <td> {{element.Text}} </td>
@@ -56,7 +54,6 @@
             <td><center> {{element.Fin}}</center></td>
             <td><center> {{element.Amount}}</center></td>
             <td><center> {{element.Unit}}</center></td>
-
             <td align="center"><input type="checkbox" ng-click="flipBegun(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Begun" /></td>
             <td align="center"><input type="checkbox" ng-click="flipDone(element.ProgressInfo[0])" ng-checked="element.ProgressInfo[0].Done" /></td>
             <td align="center"><button class="{{buttonText(element.ProgressInfo[0].Comment)}}" ng-click="startEdit(element.ProgressInfo[0])">Note</button></td>

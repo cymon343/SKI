@@ -110,7 +110,6 @@
     <Content Include="framework\angular.min.js" />
     <Content Include="framework\bootstrap.min.js" />
     <Content Include="index.html" />
-    <Content Include="models\orders.js" />
     <Content Include="scripts\SKIModule.js" />
     <Content Include="views\orderCard.html" />
     <Content Include="views\orderList.html" />

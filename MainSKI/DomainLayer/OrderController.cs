@@ -125,7 +125,7 @@ namespace DomainLayer
 
         public void AddPictureLinkToOrder(string link, string orderID)
         {
-            Link l = new Link("LNK_" + DateTime.Now.ToString(), orderID, link); //ID May need improvement.
+            Link l = new Link("LNK_" + DateTime.Now.ToString(), orderID, link);
             Order order = FindOrderByID(orderID);
             if (order != null)
                 order.AppendixLinks.Add(l);
@@ -137,7 +137,7 @@ namespace DomainLayer
 
             foreach (string l in links)
             {
-                tmpLinkList.Add(new Link("LNK_" + DateTime.Now.ToString(), orderID, l)); //ID May need improvement.
+                tmpLinkList.Add(new Link("LNK_" + DateTime.Now.ToString(), orderID, l));
             }
 
             Order order = FindOrderByID(orderID);
@@ -182,7 +182,6 @@ namespace DomainLayer
 
         public void SetElementComment(int station, string orderID, string elementID, string comment)
         {
-            //station = station - 4;
             Order order = FindOrderByID(orderID);
             if (order != null)
             {
@@ -238,6 +237,5 @@ namespace DomainLayer
         }
 
         #endregion
-
     }
 }

@@ -8,7 +8,6 @@ using DomainLayer;
 
 namespace ControllerLayer
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IProductionOrderService" in both code and config file together.
     [ServiceContract]
     public interface IProductionOrderService
     {
@@ -23,10 +22,6 @@ namespace ControllerLayer
 
         [OperationContract]
         void SetElementComment(ElementCommentRequest data);
-
-        [OperationContract]
-        ElementCommentRequest ServiceTest();
-
     }
 }
 

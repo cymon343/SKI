@@ -28,7 +28,6 @@ namespace Persistence
                     instance = new DBFacade();
                 return instance;
             }
-
         }
 
         public string UserName
@@ -69,13 +68,10 @@ namespace Persistence
             SqlTransaction transAction = null;
             try
             {
-                Console.WriteLine(UserName + " trying to access DB...");
-
                 using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))               
 
                 {
-                    conn.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
+                    conn.Open();                   
                     using (transAction = conn.BeginTransaction())
                     { 
                         //#1 Customer
@@ -217,11 +213,9 @@ namespace Persistence
 
                         }
 
-                        transAction.Commit();                        
-                        
-                        Console.WriteLine("Order created in DB...");
+                        transAction.Commit(); 
+                                               
                         conn.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
                         success = true;
                     }
                 }
@@ -250,19 +244,15 @@ namespace Persistence
 
         public List<Order> RetrieveAllOrders()
         {
-            List<Order> orders = new List<Order>();
-            
+            List<Order> orders = new List<Order>();            
             try
             {
-                Console.WriteLine(UserName + " trying to access DB...");
                 DataTable table = new DataTable();
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
                 {
                     connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
-
+                   
                     // 1) Retrieving Customer
-                    Console.WriteLine("Retrieving Customers from DB...");
                     SqlCommand cmd = new SqlCommand("SELECT * FROM getCustomers", connection);
                     table.Load(cmd.ExecuteReader());
 
@@ -280,11 +270,9 @@ namespace Persistence
                         string fax = row["Fax"].ToString();
                         customers.Add(new CustomerData(id, name, address, deliveryAddress, email, phonePrivate, phoneWork, phoneCell, fax));
                     }
-                    Console.WriteLine("Done.");
-
+                    
                     // 2) Retrieving ElementProgressState
-                    Console.WriteLine("Retrieving ElementProgressStates from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);                   
+                   cmd = new SqlCommand("SELECT * FROM getElementProgressStates", connection);                   
 
                     table = new DataTable();
                     table.Load(cmd.ExecuteReader());
@@ -300,11 +288,9 @@ namespace Persistence
                         int stationNumber = (int)row["StationNumber"];
                         eps.Add(new ProgressState(EPSID, elementID, comment, begun, done, stationNumber));
                     }
-                    Console.WriteLine("Done.");
-
+                    
                     // 3) Retrieving Element
-                    Console.WriteLine("Retrieving Elements from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getElements", connection);
+                   cmd = new SqlCommand("SELECT * FROM getElements", connection);
 
                     table = new DataTable();
                     table.Load(cmd.ExecuteReader());
@@ -336,11 +322,9 @@ namespace Persistence
                         }
                         elements.Add(new Element(id, orderID, position, text, hinge, fin, amount, unit, heading, tmpEps.ToArray()));
                     }
-                    Console.WriteLine("Done.");                  
-
+                    
                     // 4) Retrieving Links
-                    Console.WriteLine("Retrieving Links from DB...");
-                    cmd = new SqlCommand("SELECT * FROM getLinks", connection);
+                   cmd = new SqlCommand("SELECT * FROM getLinks", connection);
 
                     table = new DataTable();
                     table.Load(cmd.ExecuteReader());
@@ -354,10 +338,8 @@ namespace Persistence
 
                         links.Add(new Link(linkID, orderID, theLink));
                     }
-                    Console.WriteLine("Done.");
-
+                    
                     // 5) Retrieving Data for Prod. Data.
-                    Console.WriteLine("Retrieving Data for Prod. Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getData", connection);
 
                     table = new DataTable();
@@ -374,10 +356,8 @@ namespace Persistence
                         dataList.Add(data);
                         dataOID.Add(productionDataID);
                     }
-                    Console.WriteLine("Done.");
-
+                   
                     // 6) Retrieving Production Data
-                    Console.WriteLine("Retrieving Production Data from DB...");
                     cmd = new SqlCommand("SELECT * FROM getProductionData", connection);
 
                     table = new DataTable();
@@ -403,10 +383,8 @@ namespace Persistence
                         }
                         prodData.Add(new ProductionData(prodDataID, orderID, data));
                     }
-                    Console.WriteLine("Done.");
-
+                    
                     // 7) Retrieving Orders
-                    Console.WriteLine("Retrieving Orders from DB...");
                     cmd = new SqlCommand("SELECT * FROM getOrders", connection);
 
                     table = new DataTable();
@@ -477,10 +455,8 @@ namespace Persistence
                         orders.Add(Order.CreateOrder(id, tmpCust, orderNumber, orderSubject, orderAlternative, deliveryDate, productionDate, cubicMeters,
                                     numberOfElements, tmpLinks, mainOrderID, new List<Order>(), tmpElements, tmpProductionData));
                     }
-                    Console.WriteLine("Done.");
                     connection.Close();
-                    Console.WriteLine(UserName + " disconnected from DB...");
-
+                   
                     //7.6 Add suborders to orders.
                     for (int i = 0; i < orders.Count; i++)
                     {
@@ -508,8 +484,6 @@ namespace Persistence
                     Console.WriteLine("[StackTrace]: " + e.StackTrace);
                     Console.WriteLine("[Message]:" + e.Message);
                 }
-                
-
             }
             return orders;
         } 
@@ -519,12 +493,9 @@ namespace Persistence
             bool success = false;
             try
             {
-                Console.WriteLine(UserName + " trying to access DB...");
-
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
+               using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
                 {
                     connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
                     using (SqlCommand command = new SqlCommand("updateElementProgressStateBegun", connection) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add("@elementID", SqlDbType.VarChar).Value = elementID;
@@ -532,15 +503,9 @@ namespace Persistence
                         command.Parameters.Add("@begun", SqlDbType.Bit).Value = begun;
 
                         success = (command.ExecuteNonQuery() > 0);
-
-                        if (success)
-                            Console.WriteLine("ElementProgressStateBegun has been set in DB...");
-                        else
-                            Console.WriteLine("Failed to set ElementProgressStateBegun in DB...");
-
+                       
                         connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
+                        }
                 }
             }
             catch (SqlException e)
@@ -555,13 +520,10 @@ namespace Persistence
             bool success = false;
             try
             {
-                Console.WriteLine(UserName + " trying to access DB...");
-
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
                 {
                     connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
-                    using (SqlCommand command = new SqlCommand("updateElementProgressStateDone", connection) { CommandType = CommandType.StoredProcedure })
+                   using (SqlCommand command = new SqlCommand("updateElementProgressStateDone", connection) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add("@elementID", SqlDbType.VarChar).Value = elementID;
                         command.Parameters.Add("@stationNumber", SqlDbType.Int).Value = stationNumber;
@@ -569,14 +531,8 @@ namespace Persistence
 
                         success = (command.ExecuteNonQuery() > 0);
 
-                        if (success)
-                            Console.WriteLine("ElementProgressStateDone has been set in DB...");
-                        else
-                            Console.WriteLine("Failed to set ElementProgressStateDone in DB...");
-
                         connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
+                        }
                 }
             }
             catch (SqlException e)
@@ -591,12 +547,9 @@ namespace Persistence
             bool success = false;
             try
             {
-                Console.WriteLine(UserName + " trying to access DB...");
-
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[_userConnectionString].ConnectionString))
                 {
                     connection.Open();
-                    Console.WriteLine(UserName + " connected to DB...");
                     using (SqlCommand command = new SqlCommand("updateElementProgressStateComment", connection) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add("@elementID", SqlDbType.VarChar).Value = elementID;
@@ -605,14 +558,8 @@ namespace Persistence
 
                         success = (command.ExecuteNonQuery() > 0);
 
-                        if (success)
-                            Console.WriteLine("ElementProgressStateComment has been set in DB...");
-                        else
-                            Console.WriteLine("Failed to set ElementProgressStateComment in DB...");
-
                         connection.Close();
-                        Console.WriteLine(UserName + " disconnected from DB...");
-                    }
+                        }
                 }
             }
             catch (SqlException e)

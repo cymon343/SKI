@@ -17,8 +17,5 @@ namespace ControllerLayer
 
         [OperationContract]
         bool AddSubOrderToOrder(string path, string orderID);
-
-        [OperationContract]
-        string TestService(string test, string testy);
     }
 }

@@ -3,7 +3,6 @@ angular.module('SKI', ['ngRoute'])
 .factory('orderFactory', OrderFactory)
 .service('webApi',WebApi)
 .controller('skiController', SKICtrl)
-//.controller('orderController', OrderCtrl)  
 
 //Config for URL routing (ngRoute).
 .config(function ($routeProvider) {
@@ -32,18 +31,12 @@ function OrderFactory()
         setOrders: function(newObject)
         {
             orders = newObject;
-
-            //console.log("[orders SET]:");
-            //console.log(newObject);
         },
         getCurrentOrder: function () {
             return currentOrder;
         },
         setCurrentOrder: function (newObject) {
             currentOrder = newObject;
-
-            //console.log("[currentOrder SET]:");
-            //console.log(newObject);
         },
         getOrderbyID: function (ID) {
             for (var i = 0; i < orders.length; i++) {
@@ -61,8 +54,6 @@ function OrderFactory()
                     tmpElements.push(currentOrder.Elements[i]);
                 }
             }
-            //console.log("Returned Elements from getElementsByHeading.");
-            //console.log(tmpElements);
             return tmpElements;
         }
     };
@@ -159,7 +150,7 @@ function WebApi($http, apiUrl)
 function SKICtrl($scope, orderFactory, webApi)
 {  
     $scope.view = 'list';
-    $scope.currentProgressObject = {}; //Saving CurrentProgressState rather than just the "comment" part of it for two reasons: 1. We can also access the bools, but secondly, and more important - ng-model does not work with primitives!
+    $scope.currentProgressObject = {};
     $scope.getOrdersFromService = function () {
         webApi.getAllOrders()
            .then(function successCallback(response) {               
@@ -177,13 +168,10 @@ function SKICtrl($scope, orderFactory, webApi)
         orderFactory.setCurrentOrder(null);
         $scope.getOrdersFromService();
     }
-
     $scope.refreshPage();
-    $scope.orderFactory = orderFactory; //Is it OK to bind the factory to the scope?
-
+    $scope.orderFactory = orderFactory; 
     $scope.isOrderBegun = function isOrderBegun(id, stationIndex)
-    {
-        //console.log("printing ID from [BEGUN] method:" + id + " -stationNum: " + stationNum);
+    {       
         success = false;       
         var theOrder = orderFactory.getOrderbyID(id);
 
@@ -199,8 +187,7 @@ function SKICtrl($scope, orderFactory, webApi)
     }
 
     $scope.isOrderDone = function isOrderDone(id, stationIndex)
-    {
-        //console.log("printing ID from [DONE] method:" + id + " -stationNum: " + stationNum);
+    {        
         success = true;
         var theOrder = orderFactory.getOrderbyID(id);
 
@@ -255,21 +242,17 @@ function SKICtrl($scope, orderFactory, webApi)
     $scope.flipBegun = function flipBegun(progressInfo)
     {
         $scope.currentProgressObject = progressInfo;
-        webApi.flipBegun(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)
-       
+        webApi.flipBegun(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)       
     }
 
     $scope.flipDone = function flipDone(progressInfo)
     {
         $scope.currentProgressObject = progressInfo;
-        webApi.flipDone(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)
-     
+        webApi.flipDone(orderFactory.getCurrentOrder().ID, $scope.currentProgressObject.ParentID, $scope.currentProgressObject.StationNumber)     
     }
 
     $scope.formatDate = function(date)
     {
-        //Using date.substr(6) to remove the first 6 letters from the date (Formatted like this: /Date(1425855600000+0100)/ )
-        //Afterwards using parseInt manages to turn the remaining value into an integer, which is then supplied to the Date object.
         var outDate = new Date(parseInt(date.substr(6)));
         return outDate;
     }
