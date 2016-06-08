@@ -169,7 +169,8 @@ function SKICtrl($scope, orderFactory, webApi)
         $scope.getOrdersFromService();
     }
     $scope.refreshPage();
-    $scope.orderFactory = orderFactory; 
+    $scope.orderFactory = orderFactory;
+
     $scope.isOrderBegun = function isOrderBegun(id, stationIndex)
     {       
         success = false;       
@@ -198,6 +199,9 @@ function SKICtrl($scope, orderFactory, webApi)
                     return success;
                 }
             }
+        }
+        else {
+            success = false;
         }
         return success;
     }
